@@ -1,0 +1,63 @@
+{
+    "id": "survey-667",
+    "title": "Enquête Questionnaire",
+    "title_app": "ARP",
+    "version": "1.0",
+    "mode_enqueteur": "Enqueteur",
+    "description": "Collecte des informations sur les transports",
+    "steps": [
+      
+      {
+        "id": "q1",
+        "title": "Q1.",
+        "type": "text",
+        "label": "Quel est votre moyen de transport principal ?",
+        "placeholder": "Ex : Bus, Train, Voiture...",
+        "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
+        "redirection": "q2",
+        "input_cond": "",
+        "output_cond": "value.length > 0",
+        "required": true
+      },
+      {
+        "id": "q2",
+        "title": "Q2.",
+        "type": "single_choice",
+        "label": "Fréquence d’utilisation du transport en commun",
+        "options": ["Tous les jours", "Quelques fois par semaine", "Rarement", "Jamais"],
+        "placeholder": "",
+        "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
+        "redirection": "q3",
+        "input_cond": "answers.q1 === 'Bus' || answers.q1 === 'Train'",
+        "output_cond": "value !== null",
+        "required": true
+      },
+      {
+        "id": "q3",
+        "title": "Question 3",
+        "type": "multiple_choice",
+        "label": "Quels transports utilisez-vous ?",
+        "options": ["Bus", "Train", "Voiture", "Vélo", "Marche"],
+        "placeholder": "",
+        "help_text": "Vous pouvez sélectionner plusieurs options",
+        "redirection": "q4",
+        "input_cond": "",
+        "output_cond": "value.length > 0",
+        "required": true
+      },
+      {
+        "id": "q4",
+        "title": "Question 4",
+        "type": "autocomplete",
+        "label": "Votre commune de résidence",
+        "source": "communes",
+        "placeholder": "Tapez pour rechercher votre commune",
+        "help_text": "Commencez à taper et sélectionnez la commune correspondante",
+        "redirection": "",
+        "input_cond": "",
+        "output_cond": "value !== null",
+        "required": true
+      }
+    ]
+  }
+  

@@ -1,0 +1,70 @@
+/* ===== Desktop (par défaut) ===== */
+.text-question {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    margin: 20px 0;
+    padding: 12px;
+    border: #125aa0 solid 1px;
+    border-radius: 6px;
+  }
+  
+  /* Bloc label (num + texte) */
+  .text-question-label {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  /* Numéro de question */
+  .text-question-label .question-Num {
+    font-weight: 500;
+    color: #125aa0;
+  }
+  
+  /* Texte de la question */
+  .text-question-label .question-label {
+    font-weight: 500;
+  }
+  
+  /* Champ texte */
+  .text-question .question-input {
+    padding: 8px 10px;
+    font-size: 18px;
+  }
+  
+  
+  /* ===== Tablette ===== */
+  @media (max-width: 1024px) and (min-width: 600px) {
+    .text-question {
+      padding: 10px;
+      gap: 10px;
+    }
+  
+    .text-question-label {
+      flex-wrap: wrap;
+    }
+  
+    .text-question .question-input {
+      font-size: 14px;
+      padding: 7px 9px;
+    }
+  
+    
+  }
+  
+  /* ===== Mobile ===== */
+  @media (max-width: 599px) {
+    .text-question {
+      gap: 10px;
+    }
+  
+    .text-question-label {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+  
+    
+  }
+  
