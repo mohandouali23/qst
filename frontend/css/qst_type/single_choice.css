@@ -1,79 +1,45 @@
 /* ===== Desktop (par défaut) ===== */
-.single-choice-question {
+
+  /* Options */
+  .single-choice-question .options-container {
     display: flex;
     flex-direction: column;
-    gap: 28px;
-    margin: 20px 0;
-    padding: 12px;
-    border: 1px solid #125aa0;
-    border-radius: 6px;
+
   }
-  
-  .single-choice-question-label {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-  
-  .single-choice-question-label .question-Num {
-    font-weight: 500;
-    color: #125aa0;
-  }
-  
-  .single-choice-question-label .question-label {
-    font-weight: 500;
-  }
-  
-  /* Options */
-  .options-container div {
+  .single-choice-question .options-container div {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin: 12px 0;
+    margin: 10px 0;
   }
   
-  .options-container input[type="radio"] {
-    cursor: pointer;
-  }
-  
-  .options-container span {
-    font-size: 22px;
+  .single-choice-question .options-container span {
+    font-size: 20px;
   }
   
   /* ===== Tablette ===== */
   @media (max-width: 1024px) and (min-width: 600px) {
-    .single-choice-question {
+    .single-choice-question .single-choice-question {
       padding: 10px;
       gap: 10px;
     }
-  
-    .single-choice-question-label {
-      flex-wrap: wrap;
-    }
-  
-    .options-container span {
-      font-size: 13px;
+    .single-choice-question .options-container span {
+      font-size: 16px;
     }
   }
   
   /* ===== Mobile ===== */
   @media (max-width: 599px) {
-    .single-choice-question {
+    .single-choice-question .single-choice-question {
       gap: 10px;
     }
   
-    .single-choice-question-label {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 4px;
-    }
-  
-    .options-container div {
+    .single-choice-question .options-container div {
       gap: 6px;
     }
   
-    .options-container span {
-      font-size: 12px;
+    .single-choice-question  .options-container span {
+      font-size: 14px;
     }
   }
   

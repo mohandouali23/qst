@@ -24,17 +24,21 @@
         "title": "Q2.",
         "type": "single_choice",
         "label": "Fréquence d’utilisation du transport en commun",
-        "options": ["Tous les jours", "Quelques fois par semaine", "Rarement", "Jamais"],
+        "options": [
+          { "label": "Tous les jours" },
+          { "label": "Quelques fois par semaine" },
+          { "label": "Rarement" },
+          { "label": "Jamais" },
+          { "label": "Autre", "requiresPrecision": true }
+        ],
         "placeholder": "",
         "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
         "redirection": "q3",
-        "input_cond": "answers.q1 === 'Bus' || answers.q1 === 'Train'",
-        "output_cond": "value !== null",
         "required": true
       },
       {
         "id": "q3",
-        "title": "Question 3",
+        "title": "Q3. ",
         "type": "multiple_choice",
         "label": "Quels transports utilisez-vous ?",
         "options": ["Bus", "Train", "Voiture", "Vélo", "Marche"],
@@ -47,7 +51,7 @@
       },
       {
         "id": "q4",
-        "title": "Question 4",
+        "title": "Q4. ",
         "type": "autocomplete",
         "label": "Votre commune de résidence",
         "source": "communes",
@@ -56,6 +60,15 @@
         "redirection": "",
         "input_cond": "",
         "output_cond": "value !== null",
+        "required": true
+      },
+      {
+        "id": "q5",
+        "title": "Q5.",
+        "type": "spinner",
+        "label": "Choisissez votre région",
+        "options": ["Nord", "Sud", "Est", "Ouest", "Centre"],
+        "placeholder": "Sélectionnez une option",
         "required": true
       }
     ]

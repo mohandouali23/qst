@@ -1,0 +1,14 @@
+{
+    "communes": [
+      { "_id": 1, "commune": "Alger Centre" },
+      { "_id": 2, "commune": "Bab El Oued" },
+      { "_id": 3, "commune": "El Harrach" },
+      { "_id": 4, "commune": "Kouba" },
+      { "_id": 5, "commune": "Bir Mourad Rais" },
+      { "_id": 6, "commune": "Hydra" },
+      { "_id": 7, "commune": "Oran" },
+      { "_id": 8, "commune": "Constantine" },
+      { "_id": 9, "commune": "Annaba" }
+    ]
+  }
+  

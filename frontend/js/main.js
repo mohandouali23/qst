@@ -1,65 +1,58 @@
-import TextQuestion from './Components/TextQuestion.js';
-import SingleChoiceQuestion from './Components/SingleChoiceQuestion.js';
+import QuestionContent from './qst_type/QuestionContent.js';
 import { loadTemplate } from './loadTemplates.js';
+import ButtonNavigation from './utils/ButtonNavigation.js';
 
 const answers = {};
 let currentStep = 0;
 let survey = null;
+let sources = {};
 
-async function initTemplates() {
-  await loadTemplate('./Components/TextQuestion.html');
-  await loadTemplate('./Components/SingleChoiceQuestion.html');
-  await loadTemplate('./Components/utils/ButtonNavigation.html');
-  // await loadTemplate('./Components/single-choice-question.html');
+// Charger les templates
+async function initTemplates() { 
+  await loadTemplate('./html/qst_type/TextQuestion.html'); 
+  await loadTemplate('./html/qst_type/SingleChoiceQuestion.html'); 
+  await loadTemplate('./html/qst_type/MultipleChoiceQuestion.html'); 
+  await loadTemplate('./html/qst_type/AutocompleteQuestion.html'); 
+  await loadTemplate('./html/qst_type/SpinnerQuestion.html'); 
+  await loadTemplate('./html/qst_type/question-template.html');
+  await loadTemplate('./html/utils/PrecisionField.html'); 
 }
 
+async function loadSources() {
+  const res = await fetch('./data/communes.json');
+  const data = await res.json();
+  sources.communes = data.communes;
+}
+// Affichage de la question courante
 async function renderStep() {
   if (!survey) {
     const response = await fetch('./data/Survey_667.json');
-    survey = await response.json();
+    survey = await response.json(); 
   }
 
   const step = survey.steps[currentStep];
   const app = document.getElementById('app');
   app.innerHTML = '';
 
-  let component;
-  switch(step.type) {
-    case 'text':
-      component = new TextQuestion(step);
-      break;
-    case 'single_choice':
-      component = new SingleChoiceQuestion(step);
-      break;
-    default:
-      console.error('Type inconnu :', step.type);
-      return;
-  }
+  const questionContent = new QuestionContent(step, answers, sources);
+  const node = questionContent.render(); 
+  app.appendChild(node);
 
-  // ⚡ Render une seule fois et écouter les événements sur le DOM affiché
-  if(component) {
-    const existingAnswer = answers[step.id]; // récupère la valeur sauvegardée
-    const node = component.render(existingAnswer); 
-    app.appendChild(node);
-
-    node.addEventListener('next', (e) => {
-      answers[step.id] = e.detail; //  sauvegarde la réponse
-      handleNext(e.detail); // e.detail contient la valeur saisie
-    });
-
-    node.addEventListener('previous', () => {
-      handlePrevious();
-    });
-  }
+  // Navigation avec ButtonNavigation
+  new ButtonNavigation(node, step, answers, {
+    onNext: handleNext,
+    onPrevious: handlePrevious
+  });
 }
 
-function handleNext(value) {
+// Passage à la question suivante
+function handleNext() {
   const step = survey.steps[currentStep];
-  answers[step.id] = value;
 
-  if(step.redirection) {
+  // Redirection conditionnelle
+  if (step.redirection) {
     const nextIndex = survey.steps.findIndex(q => q.id === step.redirection);
-    if(nextIndex !== -1) {
+    if (nextIndex !== -1) {
       currentStep = nextIndex;
       renderStep();
       return;
@@ -67,18 +60,20 @@ function handleNext(value) {
   }
 
   currentStep++;
-  if(currentStep < survey.steps.length) renderStep();
+  if (currentStep < survey.steps.length) renderStep();
   else console.log('Fin questionnaire', answers);
 }
 
+// Passage à la question précédente
 function handlePrevious() {
-  if(currentStep === 0) return;
+  if (currentStep === 0) return;
   currentStep--;
   renderStep();
 }
 
 // Initialisation
-(async function() {
+(async function(){ 
   await initTemplates();
-  renderStep();
+  await loadSources();
+  renderStep(); 
 })();
