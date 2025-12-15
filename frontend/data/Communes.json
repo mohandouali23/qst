@@ -1,14 +1,14 @@
 {
     "communes": [
-      { "_id": 1, "commune": "Alger Centre" },
-      { "_id": 2, "commune": "Bab El Oued" },
-      { "_id": 3, "commune": "El Harrach" },
-      { "_id": 4, "commune": "Kouba" },
-      { "_id": 5, "commune": "Bir Mourad Rais" },
-      { "_id": 6, "commune": "Hydra" },
-      { "_id": 7, "commune": "Oran" },
-      { "_id": 8, "commune": "Constantine" },
-      { "_id": 9, "commune": "Annaba" }
+      { "_id": 1, "commune": "Alger Centre" ,"cp":"31001"},
+      { "_id": 2, "commune": "Bab El Oued" ,"cp":"31002"},
+      { "_id": 3, "commune": "El Harrach" ,"cp":"31003"},
+      { "_id": 4, "commune": "Kouba" ,"cp":"31004"},
+      { "_id": 5, "commune": "Bir Mourad Rais","cp":"31005" },
+      { "_id": 6, "commune": "Hydra" ,"cp":"31006"},
+      { "_id": 7, "commune": "Oran" ,"cp":"31007"},
+      { "_id": 8, "commune": "Constantine" ,"cp":"31008"},
+      { "_id": 9, "commune": "Annaba" ,"cp":"31009"}
     ]
   }
   

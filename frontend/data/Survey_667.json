@@ -1,76 +1,123 @@
 {
-    "id": "survey-667",
-    "title": "Enquête Questionnaire",
-    "title_app": "ARP",
-    "version": "1.0",
-    "mode_enqueteur": "Enqueteur",
-    "description": "Collecte des informations sur les transports",
-    "steps": [
-      
-      {
-        "id": "q1",
-        "title": "Q1.",
-        "type": "text",
-        "label": "Quel est votre moyen de transport principal ?",
-        "placeholder": "Ex : Bus, Train, Voiture...",
-        "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
-        "redirection": "q2",
-        "input_cond": "",
-        "output_cond": "value.length > 0",
-        "required": true
-      },
-      {
-        "id": "q2",
-        "title": "Q2.",
-        "type": "single_choice",
-        "label": "Fréquence d’utilisation du transport en commun",
-        "options": [
-          { "label": "Tous les jours" },
-          { "label": "Quelques fois par semaine" },
-          { "label": "Rarement" },
-          { "label": "Jamais" },
-          { "label": "Autre", "requiresPrecision": true }
-        ],
-        "placeholder": "",
-        "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
-        "redirection": "q3",
-        "required": true
-      },
-      {
-        "id": "q3",
-        "title": "Q3. ",
-        "type": "multiple_choice",
-        "label": "Quels transports utilisez-vous ?",
-        "options": ["Bus", "Train", "Voiture", "Vélo", "Marche"],
-        "placeholder": "",
-        "help_text": "Vous pouvez sélectionner plusieurs options",
-        "redirection": "q4",
-        "input_cond": "",
-        "output_cond": "value.length > 0",
-        "required": true
-      },
-      {
-        "id": "q4",
-        "title": "Q4. ",
-        "type": "autocomplete",
-        "label": "Votre commune de résidence",
-        "source": "communes",
-        "placeholder": "Tapez pour rechercher votre commune",
-        "help_text": "Commencez à taper et sélectionnez la commune correspondante",
-        "redirection": "",
-        "input_cond": "",
-        "output_cond": "value !== null",
-        "required": true
-      },
-      {
-        "id": "q5",
-        "title": "Q5.",
-        "type": "spinner",
-        "label": "Choisissez votre région",
-        "options": ["Nord", "Sud", "Est", "Ouest", "Centre"],
-        "placeholder": "Sélectionnez une option",
-        "required": true
-      }
-    ]
-  }
-  
+  "id": "survey-667",
+  "title": "Enquête Questionnaire",
+  "title_app": "ARP",
+  "version": "1.0",
+  "mode_enqueteur": "Enqueteur",
+  "description": "Collecte des informations sur les transports",
+  "steps": [
+    {
+      "id": "q1",
+      "title": "Q1.",
+      "type": "text",
+      "label": "Quel est votre moyen de transport principal ?",
+      "placeholder": "Ex : Bus, Train, Voiture...",
+      "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
+      "redirection": "q2",
+      "input_cond": "",
+      "output_cond": "value.length > 0",
+      "required": true
+    },
+    {
+      "id": "q2",
+      "title": "Q2.",
+      "type": "single_choice",
+      "label": "Fréquence d’utilisation du transport en commun",
+      "options": [
+        {
+          "codeItem": 1,
+          "label": "Tous les jours"
+        },
+        {
+          "codeItem": 2,
+          "label": "Quelques fois par semaine",
+          "requiresPrecision": true
+        },
+        {
+          "codeItem": 3,
+          "label": "Rarement"
+        },
+        {
+          "codeItem": 4,
+          "label": "Jamais"
+        },
+        {
+          "codeItem": 5,
+          "label": "Autre",
+          "requiresPrecision": true
+        }
+      ],
+      "placeholder": "",
+      "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
+      "redirection": "q3",
+      "required": true
+    },
+    {
+      "id": "q3",
+      "title": "Q3. ",
+      "type": "multiple_choice",
+      "label": "Quels transports utilisez-vous ?",
+      "options": [
+        "Bus",
+        "Train",
+        "Voiture",
+        "Vélo",
+        "Marche"
+      ],
+      "placeholder": "",
+      "help_text": "Vous pouvez sélectionner plusieurs options",
+      "redirection": "q4",
+      "input_cond": "",
+      "output_cond": "value.length > 0",
+      "required": true
+    },
+    {
+      "id": "q4",
+      "title": "Q4.",
+      "type": "autocomplete",
+      "label": "Votre commune de résidence",
+      "table": "communes",
+      "columns": [
+        {
+          "name": "commune",
+          "displayInList": true,
+          "displayInInput": true,
+          "saveInDB": true
+        },
+        {
+          "name": "cp",
+          "displayInList": true,
+          "displayInInput": false,
+          "saveInDB": true
+        },
+        {
+          "name": "_id",
+          "displayInList": false,
+          "displayInInput": false,
+          "saveInDB": true
+        }
+      ],
+      "placeholder": "Tapez pour rechercher votre commune",
+      "help_text": "Commencez à taper et sélectionnez la commune correspondante",
+      "redirection": "",
+      "input_cond": "",
+      "output_cond": "value !== null",
+      "required": true
+    },
+    {
+      "id": "q5",
+      "title": "Q5.",
+      "type": "spinner",
+      "label": "Choisissez votre région",
+      "options": [
+        "Nord",
+        "Sud",
+        "Est",
+        "Ouest",
+        "Centre"
+      ],
+      "placeholder": "Sélectionnez une option",
+      "required": true
+    }
+  ]
+}

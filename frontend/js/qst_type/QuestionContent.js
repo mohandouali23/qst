@@ -44,15 +44,12 @@ export default class QuestionContent {
           component = new SpinnerQuestion(this.step);
           break;
         case 'autocomplete': {
-          const source = this.sources[this.step.source]; // ex: "communes"
-        
+          const table = this.sources[this.step.table]; // ex: "communes"
+       const columns = this.step.columns[0]; 
           component = new AutocompleteQuestion(
             this.step,
-            source,
-            {
-              labelField: 'commune',
-              idField: '_id'
-            }
+            table,
+            columns
           );
           break;
         }
