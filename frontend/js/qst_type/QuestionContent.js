@@ -35,7 +35,7 @@ const TEMPLATE_CONFIG = {
   }
 };
 
-export default class QuestionContent extends Question{ 
+export default class QuestionContent extends Question {
   /**
    * @param {Object} step - La question courante
    * @param {Array} allSteps - Toutes les étapes du questionnaire
@@ -47,18 +47,19 @@ export default class QuestionContent extends Question{
     this.step = step;
     this.allSteps = allSteps;
     this.sources = sources;
-    this.templateId = templateId || 
-      (step.isSubQuestion ? 'sub-question-template' : 'question-template');
-      this.component = null;
+     this.isSubQuestion = !!step.isSubQuestion;
+    this.templateId = templateId ||
+      (this.isSubQuestion ? 'sub-question-template' : 'question-template');
+    this.component = null;
   }
-  
+
   static getStore() {
     return store;
   }
   initComponent() {
     const existingAnswer = store.get(this.step.id);
 
-    switch(this.step.type) {
+    switch (this.step.type) {
       case 'multiple_choice':
         this.component = new MultipleChoiceQuestion(this.step, store, renderers.multiple_choice, this.allSteps);
         break;
@@ -93,39 +94,39 @@ export default class QuestionContent extends Question{
 
   render() {
     if (!this.component) this.initComponent();
-  
+
     const template = document.getElementById(this.templateId);
     if (!template) {
       console.error(`Template ${this.templateId} non trouvé`);
       return document.createElement('div');
     }
-  
+
     const container = template.content.cloneNode(true).children[0];
-  
+
     const config = TEMPLATE_CONFIG[this.templateId];
     if (!config) {
       console.error(`Configuration manquante pour ${this.templateId}`);
       return container;
     }
-  
+
     // Numéro / titre
     const numEl = container.querySelector(config.num);
     if (numEl) numEl.textContent = this.step.title;
-  
+
     const textEl = container.querySelector(config.text);
     if (textEl) textEl.textContent = this.step.label;
-  
+
     // Contenu spécifique de la question
     const contentContainer = container.querySelector(config.content);
     if (!contentContainer) {
       console.error('Zone de contenu introuvable dans le template');
       return container;
     }
-  
+
     const questionNode = this.component.render();
     contentContainer.appendChild(questionNode);
-  
+
     return container;
   }
-  
+
 }

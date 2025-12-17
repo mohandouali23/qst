@@ -32,35 +32,44 @@ export default class ButtonNavigation {
           showToast('Veuillez remplir ce champ'); return null;
         }
         break;
+case 'single_choice': {
+  value = store.get(this.step.id);
+  console.log("value single", value)
+  
+  if (!value || (Array.isArray(value) && value.length === 0)) {
+    showToast('Veuillez sélectionner une option'); 
+    return null; 
+  }
 
-        case 'single_choice': {
-          value = store.get(this.step.id);
-          console.log("value single",value)
-          if (!value || (Array.isArray(value) && value.length === 0)) {
-      
-              showToast('Veuillez sélectionner une option'); 
-              return null; 
-          }
-      
-          const option = this.step.options.find(o => o.codeItem === value.value);
-          if (option?.requiresPrecision && !value.precision) {
-              showToast('Veuillez préciser votre réponse'); 
-              return null;
-          }
-      
-          // Vérification sous-question
-          if (value.requiresSubQstId) {
-              const subAnswer = store.get(value.requiresSubQstId);
-              console.log("subAnswer single",subAnswer)
-              if (!subAnswer) {
-                  showToast('Veuillez répondre à la sous-question avant de continuer'); 
-                  return null;
-              }
-              value.subAnswer = subAnswer;
-          }
-          break;
-      }
-      
+  const option = this.step.options.find(o => o.codeItem === value.value);
+  
+  if (option?.requiresPrecision && !value.precision) {
+    showToast('Veuillez préciser votre réponse'); 
+    return null;
+  }
+
+  // ⚠️ CORRECTION ICI : Vérifier la sous-question dans value.subAnswer
+  if (option?.requiresSubQst?.value) {
+    // La sous-question doit être dans value.subAnswer, pas dans le store racine
+    if (!value.subAnswer || !value.subAnswer.value) {
+      showToast('Veuillez répondre à la sous-question avant de continuer'); 
+      return null;
+    }
+    
+    // ❌ SUPPRIMER CETTE LIGNE : On ne cherche plus dans le store
+    // const subAnswer = store.get(value.requiresSubQstId);
+    
+    // ✅ Utiliser directement value.subAnswer
+    console.log("subAnswer single", value.subAnswer);
+    
+    // Vérifier que la valeur n'est pas vide
+    if (!value.subAnswer.value || value.subAnswer.value.trim() === '') {
+      showToast('Veuillez répondre à la sous-question avant de continuer'); 
+      return null;
+    }
+  }
+  break;
+}
       // case 'multiple_choice': {
       //   const comp = this.step.component;
       //   value = comp.getAnswer()?.values || [];
@@ -87,7 +96,7 @@ export default class ButtonNavigation {
       
       case 'multiple_choice': {
         value = store.get(this.step.id);
-      
+      console.log("value multi nav",value)
         if (!Validator.validate(value, this.step)) {
           showToast('Veuillez sélectionner au moins une option');
           return null;
@@ -105,19 +114,25 @@ export default class ButtonNavigation {
           }
         }
       
-        // Vérification des sous-questions (requiresSubQst)
-        // for (const option of this.step.options) {
-        //   if (option.requiresSubQst) {
-        //     const selected = value.find(v => v.value === option.value);
-        //     if (selected && selected.requiresSubQst?.value) {
-        //       const subAnswer = store.get(option.requiresSubQst.subQst_id);
-        //       if (!subAnswer) {
-        //         showToast(`Veuillez répondre à la sous-question pour "${option.label}"`);
-        //         return null;
-        //       }
-        //     }
-        //   }
-        // }
+      
+       // Vérification des sous-questions
+for (const selected of value) {
+  if (selected.subAnswer) {
+    const subVal = selected.subAnswer.value;
+
+    if (
+      subVal === null ||
+      subVal === undefined ||
+      (typeof subVal === 'string' && subVal.trim() === '')
+    ) {
+      showToast(
+        `Veuillez répondre à la sous-question pour "${selected.label}"`
+      );
+      return null;
+    }
+  }
+}
+
       
         break;
       }
@@ -133,14 +148,24 @@ export default class ButtonNavigation {
       //   break;
       //}
       
-      
+      case 'spinner': value = this.container.querySelector('select')?.value; if (!Validator.validate(value, this.step)) { showToast('Veuillez sélectionner une option'); return null; } break;
 
-      case 'spinner':
-        value = this.container.querySelector('select')?.value;
-        if (!Validator.validate(value, this.step)) {
-          showToast('Veuillez sélectionner une option'); return null;
-        }
-        break;
+//       case 'spinner': {
+//   const selectedValue = this.container.querySelector('select')?.value;
+  
+//   // Trouver l'objet complet correspondant
+//   const valueObj = this.step.options.find(opt => opt.value === selectedValue) || null;
+
+//   if (!Validator.validate(valueObj, this.step)) {
+//     showToast('Veuillez sélectionner une option');
+//     return null;
+//   }
+
+//   // Stocker ou retourner l'objet complet
+//   value = valueObj;
+//   break;
+// }
+
 
       case 'autocomplete':{
         const input = this.container.querySelector('.autocomplete-input');

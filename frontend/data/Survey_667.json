@@ -6,7 +6,6 @@
   "mode_enqueteur": "Enqueteur",
   "description": "Collecte des informations sur les transports",
   "steps": [
-   
     {
       "id": "q1",
       "title": "Q1.",
@@ -17,7 +16,8 @@
       "redirection": "q2",
       "input_cond": "",
       "output_cond": "value.length > 0",
-      "required": true
+      "required": true,
+      "isSubQuestion": false
     },
     {
       "id": "q2",
@@ -41,9 +41,10 @@
         {
           "codeItem": 4,
           "label": "Jamais",
-          "requiresSubQst":{"value" :true , "subQst_id":"q6"} 
-
-          
+          "requiresSubQst": {
+            "value": true,
+            "subQst_id": "q6"
+          }
         },
         {
           "codeItem": 5,
@@ -54,7 +55,8 @@
       "placeholder": "",
       "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
       "redirection": "q3",
-      "required": true
+      "required": true,
+      "isSubQuestion": false
     },
     {
       "id": "q3",
@@ -62,16 +64,38 @@
       "type": "multiple_choice",
       "label": "Quels transports utilisez-vous ?",
       "options": [
-        {"codeItem":1, "value": "Bus", "label": "Bus" , "requiresSubQst":{"value" :true , "subQst_id":"q7"} },
-        { "codeItem":2,"value": "Train",
-         "label": "Train",
-         "requiresPrecision": true
-         },
-        { "codeItem":3,"value": "Voiture", "label": "Voiture" },
-        { "codeItem":4,"value": "Vélo", "label": "Vélo" },
-        {"codeItem":5, "value": "Marche", "label": "Marche" },
         {
-          "codeItem":6,
+          "codeItem": 1,
+          "value": "Bus",
+          "label": "Bus",
+          "requiresSubQst": {
+            "value": true,
+            "subQst_id": "q7"
+          }
+        },
+        {
+          "codeItem": 2,
+          "value": "Train",
+          "label": "Train",
+          "requiresPrecision": true
+        },
+        {
+          "codeItem": 3,
+          "value": "Voiture",
+          "label": "Voiture"
+        },
+        {
+          "codeItem": 4,
+          "value": "Vélo",
+          "label": "Vélo"
+        },
+        {
+          "codeItem": 5,
+          "value": "Marche",
+          "label": "Marche"
+        },
+        {
+          "codeItem": 6,
           "value": "Aucun",
           "label": "Aucun",
           "exclusive": true
@@ -79,7 +103,8 @@
       ],
       "required": true,
       "output_cond": "value.length > 0",
-      "redirection": "q4"
+      "redirection": "q4",
+      "isSubQuestion": false
     },
     {
       "id": "q4",
@@ -112,7 +137,8 @@
       "redirection": "q5",
       "input_cond": "",
       "output_cond": "value !== null",
-      "required": true
+      "required": true,
+      "isSubQuestion": false
     },
     {
       "id": "q5",
@@ -120,17 +146,17 @@
       "type": "spinner",
       "label": "Choisissez votre région",
       "options": [
-        "Nord",
+       
         "Sud",
         "Est",
         "Ouest",
         "Centre"
       ],
       "placeholder": "Sélectionnez une option",
-      "required": true,   
-      "redirection": "FIN"
-    },    
-    
+      "required": true,
+      "redirection": "FIN",
+      "isSubQuestion": false
+    },
     {
       "id": "q6",
       "title": "Qbis.",
@@ -144,7 +170,8 @@
         "Centre87"
       ],
       "placeholder": "Sélectionnez une option",
-      "required": true
+      "required": true,
+      "isSubQuestion": true
     },
     {
       "id": "q7",
@@ -155,9 +182,8 @@
       "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
       "input_cond": "",
       "output_cond": "value.length > 0",
-      "required": true
+      "required": true,
+      "isSubQuestion": true
     }
-
-    
   ]
 }

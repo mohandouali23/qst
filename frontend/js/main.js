@@ -8,7 +8,7 @@ let survey = null;
 let sources = {};
 
 // Charger les templates
-async function initTemplates() { 
+async function initTemplates() {
   const templates = [
     './html/qst_type/TextQuestion.html',
     './html/qst_type/SingleChoiceQuestion.html',
@@ -43,44 +43,44 @@ async function renderStep() {
   const app = document.getElementById('app');
   app.innerHTML = '';
 
-  const questionContent = new QuestionContent(step, survey.steps, sources,'question-template');
-  const node = questionContent.render(); 
+  const questionContent = new QuestionContent(step, survey.steps, sources, 'question-template');
+  const node = questionContent.render();
   app.appendChild(node);
 
- // Navigation avec validation et stockage
- new ButtonNavigation(node, step, {
-  onNext: (value) => {
-    // sauvegarde dans le store global
-    QuestionContent.getStore().set(step.id, value);
+  // Navigation avec validation et stockage
+  new ButtonNavigation(node, step, {
+    onNext: (value) => {
+      // sauvegarde dans le store global
+      QuestionContent.getStore().set(step.id, value);
 
-    // Vérifier redirection
-    if (step.redirection) {
-      if (step.redirection.toUpperCase() === 'FIN') {
-        console.log('Fin du questionnaire', QuestionContent.getStore().getAll());
-        return; // stop navigation
+      // Vérifier redirection
+      if (step.redirection) {
+        if (step.redirection.toUpperCase() === 'FIN') {
+          console.log('Fin du questionnaire', QuestionContent.getStore().getAll());
+          return; // stop navigation
+        }
+
+        const nextIndex = survey.steps.findIndex(q => q.id === step.redirection);
+        if (nextIndex !== -1) {
+          currentStep = nextIndex;
+          renderStep();
+          return;
+        } else {
+          console.warn(`Redirection invalide : ${step.redirection}`);
+        }
       }
 
-      const nextIndex = survey.steps.findIndex(q => q.id === step.redirection);
-      if (nextIndex !== -1) {
-        currentStep = nextIndex;
-        renderStep();
-        return;
-      }else {
-        console.warn(`Redirection invalide : ${step.redirection}`);
-      }
+      // sinon prochaine question
+      currentStep++;
+      if (currentStep < survey.steps.length) renderStep();
+      else console.log('Fin questionnaire', QuestionContent.getStore().getAll());
+    },
+    onPrevious: () => {
+      if (currentStep === 0) return;
+      currentStep--;
+      renderStep();
     }
-
-    // sinon prochaine question
-    currentStep++;
-    if (currentStep < survey.steps.length) renderStep();
-    else console.log('Fin questionnaire', QuestionContent.getStore().getAll());
-  },
-  onPrevious: () => {
-    if (currentStep === 0) return;
-    currentStep--;
-    renderStep();
-  }
-});
+  });
 }
 
 // Initialisation

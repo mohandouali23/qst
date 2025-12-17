@@ -5,9 +5,9 @@ import AutoCompleteRender from './AutoCompleteRender.js';
 
 
 export default {
- multiple_choice: MultipleChoiceRenderer,
- text: TextRender,
- single_choice: SingleChoiceRender,
- autoComplete: AutoCompleteRender,
+    multiple_choice: MultipleChoiceRenderer,
+    text: TextRender,
+    single_choice: SingleChoiceRender,
+    autoComplete: AutoCompleteRender,
 
 };

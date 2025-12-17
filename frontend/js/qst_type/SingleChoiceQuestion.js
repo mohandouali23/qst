@@ -18,6 +18,7 @@ export default class SingleChoiceQuestion extends Question {
     if (this.existingAnswer?.requiresSubQstId) {
       const subStep = this.allSteps.find(s => s.id === this.existingAnswer.requiresSubQstId);
       if (subStep) {
+         //subStep.isSubQuestion = true;
         this.subQuestionInstance = new QuestionContent(subStep, this.allSteps, {}, 'sub-question-template');
         this.subQuestionInstance.initComponent();
       }
@@ -33,10 +34,11 @@ export default class SingleChoiceQuestion extends Question {
 
     // Gérer sous-question
     if (selected.requiresSubQst?.value) {
-      answer.requiresSubQstId = selected.requiresSubQst.subQst_id;
+     answer.requiresSubQstId = selected.requiresSubQst.subQst_id;
 
       const subStep = this.allSteps.find(s => s.id === selected.requiresSubQst.subQst_id);
       if (subStep) {
+       //subStep.isSubQuestion = true;
         this.subQuestionInstance = new QuestionContent(subStep, this.allSteps, {}, 'sub-question-template');
         this.subQuestionInstance.initComponent();
 
@@ -83,8 +85,15 @@ export default class SingleChoiceQuestion extends Question {
       const originalSetAnswer = subComp.setAnswer.bind(subComp);
       subComp.setAnswer = (val) => {
         originalSetAnswer(val);
-        const mainAnswer = this.getAnswer();
-        mainAnswer.subAnswer = val;
+
+       // Mettre à jour UNIQUEMENT la réponse principale avec la sous-question imbriquée
+        const mainAnswer = this.getAnswer() || {};
+        mainAnswer.subAnswer = {
+          id: this.subQuestionInstance.step.id,
+          value: val
+        };
+        
+        // Sauvegarder UNIQUEMENT la réponse principale
         this.setAnswer(mainAnswer);
       };
     }

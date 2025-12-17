@@ -10,81 +10,76 @@ export default class MultipleChoiceQuestion extends Question {
     super(step, store, renderer);
     this.selectedValues = [];
     this.allSteps = allSteps;
-    this.subQuestionInstance = null;
+    this.subQuestionInstances = {};
     this.container = null;
   }
 
   init() {
     this.selectedValues = this.getAnswer() || [];
-    // Attacher l'instance au step pour ButtonNavigation
     this.step.component = this;
   }
 
-  onChange(option, checked, precision = null) {
-    const existingIndex = this.selectedValues.findIndex(v => v.value === option.value);
+  // Gérer la sélection d’une option
+  handleOption(option, checked, precision = null) {
+    const idx = this.selectedValues.findIndex(v => v.value === option.value);
 
     if (checked) {
       const obj = {
         value: option.value,
-        label: option.label,
+       // label: option.label,
         codeItem: option.codeItem
       };
+      if (precision?.trim()) obj.precision = precision.trim();
 
-      if (precision && precision.trim() !== '') {
-        obj.precision = precision.trim();
-      }
-
-      // Ajouter ou mettre à jour l'objet sélectionné
-      if (existingIndex >= 0) {
-        this.selectedValues[existingIndex] = { ...this.selectedValues[existingIndex], ...obj };
+      // Ajouter ou mettre à jour
+      if (idx >= 0) {
+        this.selectedValues[idx] = { ...this.selectedValues[idx], ...obj };
       } else {
         this.selectedValues.push(obj);
       }
 
-      // Gérer sous-question si nécessaire
+      // Créer sous-question si nécessaire
       if (option.requiresSubQst?.value) {
         const subStep = this.allSteps.find(s => s.id === option.requiresSubQst.subQst_id);
-        if (subStep) {
-          this.subQuestionInstance = new QuestionContent(subStep, this.allSteps, {}, 'sub-question-template');
-          this.subQuestionInstance.initComponent();
-          this.subQuestionInstance.parentValue = option.value;
+        if (subStep && !this.subQuestionInstances[option.value]) {
+          const instance = new QuestionContent(subStep, this.allSteps, {}, 'sub-question-template');
+          instance.initComponent();
+          instance.parentValue = option.value;
+          this.subQuestionInstances[option.value] = instance;
 
-          // Pré-remplir la sous-question si déjà existante
-          const existingSub = this.selectedValues[existingIndex]?.subAnswer;
-          if (existingSub) {
-            this.subQuestionInstance.component.setAnswer(existingSub);
-          }
+          // Créer subAnswer uniquement si sous-question
+          this.selectedValues.find(v => v.value === option.value).subAnswer = { id: subStep.id, value: null };
         }
-      } else {
-        this.subQuestionInstance = null;
       }
-
     } else {
-      // Décocher → supprimer l'objet et la sous-question correspondante
+      // Décocher → supprimer option et sous-question
       this.selectedValues = this.selectedValues.filter(v => v.value !== option.value);
-      if (this.subQuestionInstance?.parentValue === option.value) {
-        this.subQuestionInstance = null;
-      }
+      delete this.subQuestionInstances[option.value];
     }
 
-    // Appliquer la règle exclusive
-    this.selectedValues = ExclusiveRule.apply(
-      this.step.options,
-      this.selectedValues,
-      option.value
-    );
+    // Appliquer règle exclusive tout en conservant subAnswer
+    const subAnswersBackup = this.selectedValues.reduce((acc, v) => {
+      if (v.subAnswer) acc[v.value] = v.subAnswer;
+      return acc;
+    }, {});
 
-    // Stocker la réponse
+    this.selectedValues = ExclusiveRule.apply(this.step.options, this.selectedValues, option.value);
+
+    // Restaurer les subAnswer
+   this.selectedValues = this.selectedValues.map(v => {
+  if (v.subAnswer) return { ...v, subAnswer: v.subAnswer ?? subAnswersBackup[v.value] };
+  return v; // options sans sous-question restent sans subAnswer
+});
+
+
     this.setAnswer([...this.selectedValues]);
+    this.renderer.syncCheckboxes(this.step.id, this.selectedValues.map(v => v.value));
 
-    // Mettre à jour le DOM des checkboxes
-    this.renderer.syncCheckboxes(
-      this.step.id,
-      this.selectedValues.map(v => v.value)
-    );
+    if (this.container) this.renderSubQuestions(this.container);
+  }
 
-    // Mettre à jour le DOM de la sous-question
-    if (this.container) this.renderSubQuestion(this.container);
+  onChange(option) {
+    return (checked, precision = null) => this.handleOption(option, checked, precision);
   }
 
   render() {
@@ -93,45 +88,44 @@ export default class MultipleChoiceQuestion extends Question {
     this.container = this.renderer.renderMultipleChoice(
       this.step,
       this.selectedValues,
-      (option) => (checked, precision = null) => this.onChange(option, checked, precision)
+      (option) => this.onChange(option)
     );
 
-    this.renderSubQuestion(this.container);
+    this.renderSubQuestions(this.container);
     return this.container;
   }
 
-  renderSubQuestion(container) {
-    // Supprimer l'ancienne sous-question
-    const oldSub = container.querySelector('.sub-question-container');
-    if (oldSub) oldSub.remove();
+  renderSubQuestions(container) {
+    Object.values(this.subQuestionInstances).forEach(subInstance => {
+      let subContainer = container.querySelector(`.sub-question-container[data-parent="${subInstance.parentValue}"]`);
 
-    if (!this.subQuestionInstance) return;
+      if (!subContainer) {
+        subContainer = subQuestionRender.renderSubQuestion(subInstance);
+        subContainer.dataset.parent = subInstance.parentValue;
+        container.appendChild(subContainer);
+      }
 
-    const subContainer = subQuestionRender.renderSubQuestion(this.subQuestionInstance);
-    container.appendChild(subContainer);
+      const comp = subInstance.component;
 
-    // Mettre à jour le store quand la sous-question change
-    const subComp = this.subQuestionInstance.component;
-    if (subComp?.setAnswer) {
-      //const originalSetAnswer = subComp.setAnswer.bind(subComp);
-      subComp.setAnswer = (val) => {
-        //originalSetAnswer(val);
+      if (!comp.setAnswerOriginal) {
+        comp.setAnswerOriginal = comp.setAnswer?.bind(comp) || ((val) => {});
 
-        // Mettre à jour uniquement l'objet correspondant à l'option parent
-        const mainAnswer = this.getAnswer() || [];
-        const index = mainAnswer.findIndex(v => v.value === this.subQuestionInstance.parentValue);
-        if (index >= 0) {
-          mainAnswer[index] = {
-            ...mainAnswer[index],
-            subAnswer: {
-              id: this.subQuestionInstance.step.id, // id de la sous-question
-              value: val // valeur saisie
-            }
-          };
-          console.log('mainAnswer',mainAnswer)
-          this.setAnswer(mainAnswer);
+        // Redéfinir setAnswer pour mettre à jour selectedValues
+        comp.setAnswer = (val) => {
+          const idx = this.selectedValues.findIndex(v => v.value === subInstance.parentValue);
+          if (idx >= 0) {
+            this.selectedValues[idx].subAnswer = { id: subInstance.step.id, value: val };
+            this.setAnswer([...this.selectedValues]);
+          }
+          comp.setAnswerOriginal(val);
+        };
+
+        // Pré-remplir si valeur existante
+        const idx = this.selectedValues.findIndex(v => v.value === subInstance.parentValue);
+        if (idx >= 0 && this.selectedValues[idx].subAnswer?.value != null) {
+          comp.setAnswerOriginal(this.selectedValues[idx].subAnswer.value);
         }
-      };
-    }
+      }
+    });
   }
 }

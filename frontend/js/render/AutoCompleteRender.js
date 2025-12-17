@@ -19,8 +19,8 @@ export default class AutocompleteRenderer {
         .map(c => existingAnswer[c.name])
         .filter(Boolean)
         .join(' - ');
-        // const idColumn = step.columns.find(c => c.name === '_id');
-        // input.dataset.id = existingAnswer[idColumn.name] || '';
+      // const idColumn = step.columns.find(c => c.name === '_id');
+      // input.dataset.id = existingAnswer[idColumn.name] || '';
       input.dataset.id = existingAnswer._id || '';
     }
 
