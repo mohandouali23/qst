@@ -1,24 +1,29 @@
+import Question from './Question.js';
 
-export default class TextQuestion {
-  constructor(step) {
-    this.step = step;
+export default class TextQuestion extends Question {
+  constructor(step, store, renderer) {
+    super(step, store, renderer);
+    this.value = '';
   }
 
-  render(existingAnswer = '') {
-    const template = document.getElementById('text-question-template');
-    if (!template) {
-      console.error('Template non trouvé');
-      return document.createElement('div');
-    }
-    const container = template.content.cloneNode(true).children[0];
+  init() {
+    // récupère la valeur depuis le store
+    this.value = this.getAnswer() || '';
+  }
 
-    const input = container.querySelector('.question-input');
-    if (this.step.placeholder) input.placeholder = this.step.placeholder;
+  onChange(newValue) {
+    this.value = newValue;
+    this.setAnswer(this.value);
+  }
 
-    if(this.step.placeholder) input.placeholder = this.step.placeholder;
-    if(existingAnswer) input.value = existingAnswer;
+  render() {
+    this.init();
 
-    container.appendChild(input);
-    return container;
+    // le renderer prend la step, la valeur actuelle et un callback onChange
+    return this.renderer.renderText(
+      this.step,
+      this.value,
+      (val) => this.onChange(val)
+    );
   }
 }

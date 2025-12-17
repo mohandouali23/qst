@@ -6,6 +6,7 @@
   "mode_enqueteur": "Enqueteur",
   "description": "Collecte des informations sur les transports",
   "steps": [
+   
     {
       "id": "q1",
       "title": "Q1.",
@@ -39,7 +40,10 @@
         },
         {
           "codeItem": 4,
-          "label": "Jamais"
+          "label": "Jamais",
+          "requiresSubQst":{"value" :true , "subQst_id":"q6"} 
+
+          
         },
         {
           "codeItem": 5,
@@ -54,22 +58,28 @@
     },
     {
       "id": "q3",
-      "title": "Q3. ",
+      "title": "Q3.",
       "type": "multiple_choice",
       "label": "Quels transports utilisez-vous ?",
       "options": [
-        "Bus",
-        "Train",
-        "Voiture",
-        "Vélo",
-        "Marche"
+        {"codeItem":1, "value": "Bus", "label": "Bus" , "requiresSubQst":{"value" :true , "subQst_id":"q7"} },
+        { "codeItem":2,"value": "Train",
+         "label": "Train",
+         "requiresPrecision": true
+         },
+        { "codeItem":3,"value": "Voiture", "label": "Voiture" },
+        { "codeItem":4,"value": "Vélo", "label": "Vélo" },
+        {"codeItem":5, "value": "Marche", "label": "Marche" },
+        {
+          "codeItem":6,
+          "value": "Aucun",
+          "label": "Aucun",
+          "exclusive": true
+        }
       ],
-      "placeholder": "",
-      "help_text": "Vous pouvez sélectionner plusieurs options",
-      "redirection": "q4",
-      "input_cond": "",
+      "required": true,
       "output_cond": "value.length > 0",
-      "required": true
+      "redirection": "q4"
     },
     {
       "id": "q4",
@@ -87,7 +97,7 @@
         {
           "name": "cp",
           "displayInList": true,
-          "displayInInput": false,
+          "displayInInput": true,
           "saveInDB": true
         },
         {
@@ -99,7 +109,7 @@
       ],
       "placeholder": "Tapez pour rechercher votre commune",
       "help_text": "Commencez à taper et sélectionnez la commune correspondante",
-      "redirection": "",
+      "redirection": "q5",
       "input_cond": "",
       "output_cond": "value !== null",
       "required": true
@@ -117,7 +127,37 @@
         "Centre"
       ],
       "placeholder": "Sélectionnez une option",
+      "required": true,   
+      "redirection": "FIN"
+    },    
+    
+    {
+      "id": "q6",
+      "title": "Qbis.",
+      "type": "spinner",
+      "label": "Choisissez votre région",
+      "options": [
+        "Nord22",
+        "Sud35",
+        "Est5",
+        "Ouest8",
+        "Centre87"
+      ],
+      "placeholder": "Sélectionnez une option",
+      "required": true
+    },
+    {
+      "id": "q7",
+      "title": "Q1.",
+      "type": "text",
+      "label": "Quel est votre moyen de transport principal  bus?",
+      "placeholder": "uu",
+      "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
+      "input_cond": "",
+      "output_cond": "value.length > 0",
       "required": true
     }
+
+    
   ]
 }

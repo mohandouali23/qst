@@ -1,126 +1,209 @@
-export default class SingleChoiceQuestion {
-  constructor(step) {
-    this.step = step;
+import Question from './Question.js';
+import QuestionContent from './QuestionContent.js';
+import SubQuestionRender from '../render/SubQuestionRender.js';
+
+const subQuestionRender = new SubQuestionRender();
+
+export default class SingleChoiceQuestion extends Question {
+  constructor(step, store, renderer, allSteps) {
+    super(step, store, renderer);
+    this.allSteps = allSteps;
+    this.subQuestionInstance = null;
   }
 
-  render(existingAnswer = null) {
-    const template = document.getElementById('single-choice-question-template');
-    const precisionTemplate = document.getElementById('precision-input-template');
+  init() {
+    this.existingAnswer = this.getAnswer();
 
-    if (!template || !precisionTemplate) {
-      console.error('Template SingleChoiceQuestion ou Precision non trouvé');
-      return document.createElement('div');
+    // Si sous-question existante dans le store, créer l'instance
+    if (this.existingAnswer?.requiresSubQstId) {
+      const subStep = this.allSteps.find(s => s.id === this.existingAnswer.requiresSubQstId);
+      if (subStep) {
+        this.subQuestionInstance = new QuestionContent(subStep, this.allSteps, {}, 'sub-question-template');
+        this.subQuestionInstance.initComponent();
+      }
     }
 
-    const container = template.content.cloneNode(true).children[0];
-    const optionsContainer = container.querySelector('.options-container');
+    // Attacher l'instance au step pour ButtonNavigation
+    this.step.component = this;
+  }
 
-    // this.step.options.forEach(option => {
-    //   const div = document.createElement('div');
+  onChange(selected) {
+    const answer = { value: selected.value, label: selected.label };
+    if (selected.precision) answer.precision = selected.precision;
 
-    //   const input = document.createElement('input');
-    //   input.type = 'radio';
-    //   input.name = this.step.id;
-    //   input.value = option.label;
-    //   if(existingAnswer && existingAnswer.value === option.label) input.checked = true;
+    // Gérer sous-question
+    if (selected.requiresSubQst?.value) {
+      answer.requiresSubQstId = selected.requiresSubQst.subQst_id;
 
-    //   const span = document.createElement('span');
-    //   span.textContent = option.label;
+      const subStep = this.allSteps.find(s => s.id === selected.requiresSubQst.subQst_id);
+      if (subStep) {
+        this.subQuestionInstance = new QuestionContent(subStep, this.allSteps, {}, 'sub-question-template');
+        this.subQuestionInstance.initComponent();
 
-    //   div.appendChild(input);
-    //   div.appendChild(span);
-
-    //   // Champ précision cloné depuis template
-
-    //   if(option.requiresPrecision) {
-    //     const precisionClone = precisionTemplate.content.cloneNode(true);
-    //     const precisionContainer = precisionClone.querySelector('.precision-container');
-    //     const precisionInput = precisionContainer.querySelector('.precision-input');
-
-    //     // Toujours cacher au départ
-    //     precisionContainer.style.display = 'none';
-
-    //     // Pré-remplissage si déjà répondu
-    //     if(existingAnswer && 
-    //       existingAnswer.value === option.label && 
-    //       existingAnswer.precision) {
-    //       precisionInput.value = existingAnswer.precision;
-    //       precisionContainer.style.display = 'block';
-    //     }
-
-    //     div.appendChild(precisionContainer);
-
-    //     // Afficher / cacher le champ selon sélection
-    //     input.addEventListener('change', () => {
-    //       precisionContainer.style.display = input.checked ? 'block' : 'none';
-    //     });
-
-    //     // Vérifie à l'initialisation si ce radio est coché
-    //     if(input.checked) {
-    //       precisionContainer.style.display = 'block';
-    //     }
-    //   }
-
-
-    //   optionsContainer.appendChild(div);
-    // });
-
-    this.step.options.forEach(option => {
-      const div = document.createElement('div');
-      // Radio input
-      const input = document.createElement('input');
-      input.type = 'radio';
-      input.name = this.step.id;
-      input.value = option.codeItem;
-
-      if (existingAnswer && existingAnswer.value === option.codeItem) {
-        input.checked = true;
+        // Pré-remplir si déjà existant
+        const existingSubAnswer = this.store.get(subStep.id);
+        if (existingSubAnswer) this.subQuestionInstance.component.setAnswer(existingSubAnswer);
       }
+    } else {
+      this.subQuestionInstance = null;
+    }
 
-      const span = document.createElement('span');
-      span.textContent = option.label;
+    this.setAnswer(answer);
+  }
 
-      div.appendChild(input);
-      div.appendChild(span);
-      //  Champ précision (si nécessaire)
-      let precisionContainer = null;
+  render() {
+    this.init();
 
-      if (option.requiresPrecision) {
-        const precisionClone = precisionTemplate.content.cloneNode(true);
-        precisionContainer = precisionClone.querySelector('.precision-container');
-        const precisionInput = precisionContainer.querySelector('.precision-input');
-
-        precisionContainer.style.display = 'none';
-
-        // Pré-remplissage
-        if (
-          existingAnswer &&
-          existingAnswer.value === option.codeItem &&
-          existingAnswer.precision
-        ) {
-          precisionInput.value = existingAnswer.precision;
-          precisionContainer.style.display = 'block';
-        }
-
-        div.appendChild(precisionContainer);
+    const container = this.renderer.renderSingleChoice(
+      this.step,
+      this.existingAnswer,
+      (selected) => {
+        this.onChange(selected);
+        this.renderSubQuestion(container);
       }
+    );
 
-      // ✅ GESTION GLOBALE DU CHANGE
-      input.addEventListener('change', () => {
-        // 1️⃣ cacher tous les champs précision
-        optionsContainer
-          .querySelectorAll('.precision-container')
-          .forEach(pc => pc.style.display = 'none');
-
-        // 2️⃣ afficher uniquement celui de "Autre"
-        if (precisionContainer && input.checked) {
-          precisionContainer.style.display = 'block';
-        }
-      });
-
-      optionsContainer.appendChild(div);
-    });
-
+    this.renderSubQuestion(container);
     return container;
   }
+
+  renderSubQuestion(container) {
+    // Supprimer l'ancienne sous-question
+    const oldSub = container.querySelector('.sub-question-container');
+    if (oldSub) oldSub.remove();
+
+    if (!this.subQuestionInstance) return;
+
+    const subContainer = subQuestionRender.renderSubQuestion(this.subQuestionInstance);
+    container.appendChild(subContainer);
+
+    // Mettre à jour le store quand la sous-question change
+    const subComp = this.subQuestionInstance.component;
+    if (subComp?.setAnswer) {
+      const originalSetAnswer = subComp.setAnswer.bind(subComp);
+      subComp.setAnswer = (val) => {
+        originalSetAnswer(val);
+        const mainAnswer = this.getAnswer();
+        mainAnswer.subAnswer = val;
+        this.setAnswer(mainAnswer);
+      };
+    }
+  }
 }
+
+// export default class SingleChoiceQuestion extends Question{
+//   constructor(step, store, renderer, allSteps) {
+//     super(step, store, renderer);
+//     this.step = step;
+//     this.store = store;
+//     this.renderer = renderer;
+//     this.allSteps = allSteps; // Toutes les étapes du survey pour trouver les subQst
+//     this.subQuestionInstance = null;
+//   }
+
+//   init() {
+//     this.existingAnswer = this.store.get(this.step.id) || null;
+
+//     // Si sous-question existante dans store, créer instance
+//     if (this.existingAnswer?.subAnswer && this.existingAnswer.requiresSubQstId) {
+//       const subStep = this.allSteps.find(s => s.id === this.existingAnswer.requiresSubQstId);
+//       if (subStep) {
+//         this.subQuestionInstance = new QuestionContent(subStep);
+//       }
+//     }
+//   }
+
+//   onChange(selected) {
+//     // selected = { value, label, precision }
+
+//     const answer = {
+//       value: selected.value,
+//       label: selected.label
+//     };
+//     if (selected.precision) answer.precision = selected.precision;
+
+//     // Gérer sous-question
+//     if (selected.requiresSubQst?.value) {
+//       answer.requiresSubQstId = selected.requiresSubQst.subQst_id;
+
+//       // créer l’instance de sous-question
+//       const subStep = this.allSteps.find(s => s.id === selected.requiresSubQst.subQst_id);
+//       if (subStep) {
+//         const existingSubAnswer = this.store.get(subStep.id) || null;
+//         // On passe un template spécial pour la sous-question
+//         this.subQuestionInstance = new QuestionContent(
+//           subStep,
+//           this.allSteps,
+//           {}, // ou sources si nécessaire
+//           'sub-question-template' // ID du template spécifique pour sous-question
+//         );
+//          // Pré-remplir la sous-question
+//     if (existingSubAnswer) {
+//       this.subQuestionInstance.initComponent?.();
+//       this.subQuestionInstance.component?.setAnswer(existingSubAnswer);
+//     }
+
+//     // On conserve dans l'answer principal
+//    // answer.subAnswer = existingSubAnswer;
+//       }
+//     } else {
+//       this.subQuestionInstance = null;
+//     }
+
+//     // si déjà existant un sous-answer, on le conserve
+//     // if (this.subQuestionInstance) {
+//     //   const subStepId = answer.requiresSubQstId;
+//     //   answer.subAnswer = this.store.get(subStepId) || null;
+//     // }
+    
+
+//     this.store.set(this.step.id, answer);
+//   }
+
+//   render() {
+//     this.init();
+    
+//     const container = this.renderer.renderSingleChoice(
+//       this.step,
+//       this.existingAnswer,
+//       (selected) => {
+//         this.onChange(selected);
+//         // ré-rendu sous-question si nécessaire
+//         this.renderSubQuestion(container);
+//       }
+//     );
+
+//     // Affichage initial sous-question
+//     this.renderSubQuestion(container);
+
+//     return container;
+//   }
+
+//   renderSubQuestion(container) {
+//     // Supprimer l'ancienne sous-question
+//     const oldSub = container.querySelector('.sub-question-container');
+//     if (oldSub) oldSub.remove();
+
+//     if (this.subQuestionInstance) {
+//         this.subQuestionInstance.initComponent?.();
+//         const subContainer = subQuestionRender.renderSubQuestion(this.subQuestionInstance);
+
+//         // Écouter les changements sur la sous-question
+//         const subComp = this.subQuestionInstance.component;
+//         if (subComp) {
+//             // si la sous-question a une méthode onChange
+//             const originalSetAnswer = subComp.setAnswer?.bind(subComp);
+//             subComp.setAnswer = (answer) => {
+//                 if (originalSetAnswer) originalSetAnswer(answer);
+//                 // Mettre à jour la subAnswer dans la question principale
+//                 const mainAnswer = this.store.get(this.step.id) || {};
+//                 mainAnswer.subAnswer = answer;
+//                 this.store.set(this.step.id, mainAnswer);
+//             }
+//         }
+
+//         container.appendChild(subContainer);
+//     }
+// }
+
+// }

@@ -1,0 +1,26 @@
+/js
+ ├─ core/                  # Logique métier et classes de base
+ │   ├─ Question.js         # Classe de base pour toutes les questions
+ │   ├─ TextQuestion.js     # Texte libre
+ │   ├─ SingleChoiceQuestion.js
+ │   ├─ MultipleChoiceQuestion.js
+ │   ├─ AutocompleteQuestion.js
+ │   ├─ SpinnerQuestion.js
+ │
+ ├─ rules/                 # Règles métier indépendantes
+ │   ├─ ExclusiveRule.js    # Pour les options “Aucun”, “Jamais”
+ │   ├─ RequiredRule.js     # Validation “required”
+ │   ├─ ConditionalRule.js  # input_cond, output_cond
+ │
+ ├─ store/                 # Gestion globale des réponses
+ │   ├─ AnswerStore.js
+ │
+ ├─ ui/                    # Tout ce qui touche à l’UI
+ │   ├─ Renderer.js
+ │   ├─ Templates/          # Templates HTML (optional)
+ │
+ ├─ utils/                  # Fonctions utilitaires
+ │   ├─ JSONLoader.js       # Charger différents templates
+ │   ├─ Validator.js
+ │
+ └─ app.js                  # Orchestration du questionnaire
