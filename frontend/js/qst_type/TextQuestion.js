@@ -7,19 +7,46 @@ export default class TextQuestion extends Question {
   }
 
   init() {
-    // récupère la valeur depuis le store
-    this.value = this.getAnswer() || '';
-  }
+    //this.value = this.getAnswer() ?? '';
 
+    const answer = this.getAnswer();
+    this.value = answer?.value ?? '';
+  }
+  buildAnswerObject() {
+    return {
+      questionId: this.step.id,
+      type: 'text',
+      value: this.value
+    };
+  }
   onChange(newValue) {
     this.value = newValue;
-    this.setAnswer(this.value);
+   // this.setAnswer(this.value);
+   this.setAnswer(
+    this.buildAnswerObject()
+  );
+  }
+
+  isValid() {
+    if (!this.step.required) return true;
+
+    if (typeof this.value !== 'string') return false;
+    if (this.value.trim() === '') return false;
+
+    if (this.step.minLength && this.value.length < this.step.minLength) {
+      return false;
+    }
+
+    if (this.step.maxLength && this.value.length > this.step.maxLength) {
+      return false;
+    }
+
+    return true;
   }
 
   render() {
     this.init();
 
-    // le renderer prend la step, la valeur actuelle et un callback onChange
     return this.renderer.renderText(
       this.step,
       this.value,

@@ -9,22 +9,22 @@ export default class Question {
     return this.store.get(this.step.id);
   }
 
-  setAnswer(value) {
-     if (this.step.isSubQuestion) return;
-    this.store.set(this.step.id, value);
-  }
-  isValid() {
-    if (!this.step.required) return true;
-    return this.getAnswer() != null;
-  }
-
-  // isValid() {
-  //   if (!this.step.required) return true;
-  //   const answer = this.getAnswer();
-  //   return answer !== null && answer !== undefined && answer.length > 0;
+  // setAnswer(value) {
+  //   if (this.step.isSubQuestion) return;
+  //   this.store.set(this.step.id, value);
   // }
 
+  setAnswer(answerObject) {
+    if (this.step.isSubQuestion) return;
+    this.store.set(this.step.id, answerObject);
+  }
+
+  isValid() {
+    if (!this.step.required) return true;
+    return this.getAnswer() !== null;
+  }
+
   render() {
-    throw new Error("Render doit être implémenté par la sous-classe");
+    throw new Error('Render doit être implémenté');
   }
 }

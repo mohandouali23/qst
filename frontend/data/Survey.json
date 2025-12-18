@@ -1,0 +1,140 @@
+{
+    "id": "survey-667",
+    "title": "Enquête Questionnaire",
+    "steps": [
+      {
+        "id": "q1",
+        "type": "text",
+        "label": "Quel est votre moyen de transport principal ?",
+        "required": true,
+        "redirection": "q2"
+      },
+      {
+        "id": "q2",
+        "type": "single_choice",
+        "label": "Fréquence d’utilisation du transport en commun",
+        "required": true,
+        "redirection": "q3",
+        "options": [
+          {
+            "value": 1,
+            "label": "Tous les jours"
+          },
+          {
+            "value": 2,
+            "label": "Quelques fois par semaine",
+            "precision": {
+              "type": "text",
+              "label": "Précisez la fréquence",
+              "required": true
+            }
+          },
+          {
+            "value": 4,
+            "label": "Jamais",
+            "questions": [
+              {
+                "id": "q2_1",
+                "type": "spinner",
+                "label": "Pourquoi ?",
+                "required": true,
+                "options": [
+                    {"codeItem": 1,"value": "Nord22"}, 
+                     {"codeItem": 2,"value": "Sud35"}
+                    ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "q3",
+        "type": "multiple_choice",
+        "label": "Quels transports utilisez-vous ?",
+        "required": true,
+        "redirection": "q4",
+        "options": [
+          { "codeItem": 1,
+            "value": "Bus",
+            "questions": [
+              {
+                "id": "q3_bus",
+                "type": "text",
+                "label": "Pourquoi le bus ?",
+                "required": true
+              }
+            ]
+          },
+          { "codeItem": 2,
+            "value": "Train",
+            "precision": {
+              "type": "text",
+              "label": "Quel type de train ?",
+              "required": false
+            }
+          },
+          { "codeItem": 3,
+            "value": "velo"
+          },
+          {
+            "codeItem": 6,
+            "value": "Aucun",
+            "exclusive": true
+          }
+        ]
+      },
+      {
+        "id": "q4",
+        "title": "Q4.",
+        "type": "autocomplete",
+        "label": "Votre commune de résidence",
+        "table": "communes",
+        "columns": [
+          {
+            "name": "commune",
+            "displayInList": true,
+            "displayInInput": true,
+            "saveInDB": true
+          },
+          {
+            "name": "cp",
+            "displayInList": true,
+            "displayInInput": true,
+            "saveInDB": true
+          },
+          {
+            "name": "_id",
+            "displayInList": false,
+            "displayInInput": false,
+            "saveInDB": true
+          }
+        ],
+        "placeholder": "Tapez pour rechercher votre commune",
+        "help_text": "Commencez à taper et sélectionnez la commune correspondante",
+        "redirection": "q5",
+        "input_cond": "",
+        "output_cond": "value !== null",
+        "required": true,
+        "isSubQuestion": false
+      },
+      {
+        "id": "q5",
+        "title": "Q5.",
+        "type": "spinner",
+        "label": "Choisissez votre région",
+        "options": [
+            {"codeItem": 1,"value": "Sud"}, 
+            {"codeItem": 2,"value": "Est"},
+            {"codeItem": 3,"value": "Ouest"}, 
+            {"codeItem": 4,"value": "Centre"}
+         
+        ],
+        "placeholder": "Sélectionnez une option",
+        "required": true,
+        "redirection": "FIN"
+        
+      }
+      
+    ]
+  }
+  

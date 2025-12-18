@@ -1,50 +1,79 @@
-// utils/SubQuestionManager.js
-import QuestionContent from '../qst_type/QuestionContent.js'
+import QuestionContent from '../qst_type/QuestionContent.js';
+import SubQuestionRender from '../render/SubQuestionRender.js';
+
+const subQuestionRender = new SubQuestionRender();
+
 export default class SubQuestionManager {
-  constructor(store, allSteps) {
+  constructor(allSteps, store) {
+    this.allSteps = allSteps;
     this.store = store;
-    this.allSteps = allSteps; // toutes les étapes du survey
-    this.subQuestionInstance = null;
+    this.instances = {}; // { parentValue: QuestionContent }
   }
 
-  /**
-   * Vérifie les options sélectionnées et crée la sous-question si nécessaire
-   * @param {Object|Array} selected - option sélectionnée (single) ou tableau (multi)
-   */
-  handleSubQuestion(selected, container) {
-    // Supprimer sous-question existante
-    if (this.subQuestionInstance) {
-      const oldSub = container.querySelector('.sub-question-container');
-      if (oldSub) oldSub.remove();
-      this.subQuestionInstance = null;
+  // Créer ou récupérer une sous-question pour une option
+  createSubQuestion(option, existingSubAnswer = null) {
+    const subStep = this.allSteps.find(s => s.id === option.requiresSubQst?.subQst_id);
+    if (!subStep) return null;
+
+    const instance = new QuestionContent(subStep, this.allSteps, {}, 'sub-question-template');
+    instance.initComponent();
+    instance.parentValue = option.value;
+
+    // Pré-remplir si une réponse existe
+    if (existingSubAnswer) {
+      instance.component.setAnswer(existingSubAnswer);
     }
 
-    let subStepId = null;
+    this.instances[option.value] = instance;
 
-    if (Array.isArray(selected)) {
-      // Multi choix : vérifier toutes les options sélectionnées
-      const optWithSub = selected.find(opt => opt.requiresSubQst?.value);
-      if (optWithSub) subStepId = optWithSub.requiresSubQst.subQst_id;
-    } else {
-      // Single choix
-      if (selected.requiresSubQst?.value) subStepId = selected.requiresSubQst.subQst_id;
-    }
+    // Retourner l'instance pour manipulation
+    return instance;
+  }
 
-    if (!subStepId) return; // pas de sous-question à afficher
+  // Rendu générique d'une sous-question
+  renderSubQuestions(container) {
+    Object.values(this.instances).forEach(subInstance => {
+      let subContainer = container.querySelector(`.sub-question-container[data-parent="${subInstance.parentValue}"]`);
+      if (!subContainer) {
+        subContainer = subQuestionRender.renderSubQuestion(subInstance);
+        subContainer.dataset.parent = subInstance.parentValue;
+        container.appendChild(subContainer);
+      }
 
-    const subStep = this.allSteps.find(s => s.id === subStepId);
-    if (!subStep) return;
+      const comp = subInstance.component;
+      if (!comp.setAnswerOriginal) {
+        comp.setAnswerOriginal = comp.setAnswer?.bind(comp) || ((val) => {});
+        comp.setAnswer = (val) => {
+          // Mettre à jour la valeur dans le store principal
+          const mainAnswer = this.store.get(subInstance.parentValue) || {};
+          mainAnswer.subAnswer = { id: subInstance.step.id, value: val };
+          this.store.set(subInstance.parentValue, mainAnswer);
 
-    // créer l'instance
-    this.subQuestionInstance = new QuestionContent(subStep);
+          // Appeler l'original pour ne rien casser
+          comp.setAnswerOriginal(val);
+        };
+      }
+    });
+  }
 
-    // Rendu sous-question
-    const subContainer = document.createElement('div');
-    subContainer.classList.add('sub-question-container');
-    subContainer.appendChild(this.subQuestionInstance.render());
+  // Récupérer la réponse d’une sous-question
+  getSubAnswer(parentValue) {
+    const instance = this.instances[parentValue];
+    if (!instance) return null;
+    return instance.component.getAnswer();
+  }
 
-    container.appendChild(subContainer);
+  // Validation générique d'une sous-question
+  isValid(parentValue) {
+    const instance = this.instances[parentValue];
+    if (!instance) return true;
+    const answer = instance.component.getAnswer();
+    const step = instance.step;
+    return answer !== null && step && step.required ? !!answer : true;
+  }
 
-    return this.subQuestionInstance; // pour éventuellement récupérer subAnswer
+  // Supprimer une sous-question
+  removeSubQuestion(parentValue) {
+    delete this.instances[parentValue];
   }
 }

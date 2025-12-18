@@ -61,11 +61,11 @@ export default class QuestionContent extends Question {
 
     switch (this.step.type) {
       case 'multiple_choice':
-        this.component = new MultipleChoiceQuestion(this.step, store, renderers.multiple_choice, this.allSteps);
+        this.component = new MultipleChoiceQuestion(this.step, store, renderers.multiple_choice, this.allSteps,this.sources);
         break;
 
       case 'single_choice':
-        this.component = new SingleChoiceQuestion(this.step, store, renderers.single_choice, this.allSteps);
+        this.component = new SingleChoiceQuestion(this.step, store, renderers.single_choice, this.allSteps, this.sources);
         break;
 
       case 'text':

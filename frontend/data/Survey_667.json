@@ -36,7 +36,11 @@
         },
         {
           "codeItem": 3,
-          "label": "Rarement"
+          "label": "Rarement",
+          "requiresSubQst": {
+            "value": true,
+            "subQst_id": "q9"
+          }
         },
         {
           "codeItem": 4,
@@ -70,7 +74,7 @@
           "label": "Bus",
           "requiresSubQst": {
             "value": true,
-            "subQst_id": "q7"
+            "subQst_id": "q9"
           }
         },
         {
@@ -82,7 +86,11 @@
         {
           "codeItem": 3,
           "value": "Voiture",
-          "label": "Voiture"
+          "label": "Voiture",
+          "requiresSubQst": {
+            "value": true,
+            "subQst_id": "q8"
+          }
         },
         {
           "codeItem": 4,
@@ -157,9 +165,12 @@
       "redirection": "FIN",
       "isSubQuestion": false
     },
+
+
+
     {
       "id": "q6",
-      "title": "Qbis.",
+      "title": "Q6bis.",
       "type": "spinner",
       "label": "Choisissez votre région",
       "options": [
@@ -175,7 +186,7 @@
     },
     {
       "id": "q7",
-      "title": "Q1.",
+      "title": "Q7bis.",
       "type": "text",
       "label": "Quel est votre moyen de transport principal  bus?",
       "placeholder": "uu",
@@ -184,6 +195,99 @@
       "output_cond": "value.length > 0",
       "required": true,
       "isSubQuestion": true
+    },
+    {
+      "id": "q8",
+      "title": "Q8bis.",
+      "type": "multiple_choice",
+      "label": "Quels transports utilisez-vous ?",
+      "options": [
+        {
+          "codeItem": 1,
+          "value": "Bus6",
+          "label": "Bus"
+      
+        },
+        {
+          "codeItem": 2,
+          "value": "Train",
+          "label": "Train",
+          "requiresPrecision": true
+        },
+        {
+          "codeItem": 3,
+          "value": "Voiture",
+          "label": "Voiture"
+        },
+       
+        {
+          "codeItem": 6,
+          "value": "Aucun",
+          "label": "Aucun",
+          "exclusive": true
+        }
+      ],
+      "required": true,
+      "output_cond": "value.length > 0",
+      
+      "isSubQuestion": false
+    },
+    {
+      "id": "q9",
+      "title": "Q9bis.",
+      "type": "single_choice",
+      "label": "Fréquence d’utilisation du transport en commun",
+      "options": [
+        {
+          "codeItem": 1,
+          "label": "Tous les jours1"
+        },
+        {
+          "codeItem": 2,
+          "label": "Quelques fois par semaine2",
+          "requiresPrecision": true
+        }
+        
+      ],
+      "placeholder": "",
+      "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
+      
+      "required": true,
+      "isSubQuestion": false
+    },
+    {
+      "id": "q10",
+      "title": "Q10bis.",
+      "type": "autocomplete",
+      "label": "Votre commune de résidence",
+      "table": "communes",
+      "columns": [
+        {
+          "name": "commune",
+          "displayInList": true,
+          "displayInInput": true,
+          "saveInDB": true
+        },
+        {
+          "name": "cp",
+          "displayInList": true,
+          "displayInInput": true,
+          "saveInDB": true
+        },
+        {
+          "name": "_id",
+          "displayInList": false,
+          "displayInInput": false,
+          "saveInDB": true
+        }
+      ],
+      "placeholder": "Tapez pour rechercher votre commune",
+      "help_text": "Commencez à taper et sélectionnez la commune correspondante",
+      
+      "input_cond": "",
+      "output_cond": "value !== null",
+      "required": true,
+      "isSubQuestion": false
     }
   ]
 }

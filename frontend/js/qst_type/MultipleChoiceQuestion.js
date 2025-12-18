@@ -6,10 +6,11 @@ import SubQuestionRender from '../render/SubQuestionRender.js';
 const subQuestionRender = new SubQuestionRender();
 
 export default class MultipleChoiceQuestion extends Question {
-  constructor(step, store, renderer, allSteps) {
+  constructor(step, store, renderer, allSteps,sources = {}) {
     super(step, store, renderer);
     this.selectedValues = [];
     this.allSteps = allSteps;
+    this.sources = sources; 
     this.subQuestionInstances = {};
     this.container = null;
   }
@@ -42,7 +43,9 @@ export default class MultipleChoiceQuestion extends Question {
       if (option.requiresSubQst?.value) {
         const subStep = this.allSteps.find(s => s.id === option.requiresSubQst.subQst_id);
         if (subStep && !this.subQuestionInstances[option.value]) {
-          const instance = new QuestionContent(subStep, this.allSteps, {}, 'sub-question-template');
+          const tableData = subStep.table ? { [subStep.table]: this.sources[subStep.table] || [] } : {};console.log('tableData',tableData)
+
+          const instance = new QuestionContent(subStep, this.allSteps, tableData, 'sub-question-template');
           instance.initComponent();
           instance.parentValue = option.value;
           this.subQuestionInstances[option.value] = instance;

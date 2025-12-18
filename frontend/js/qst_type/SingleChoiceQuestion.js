@@ -5,9 +5,11 @@ import SubQuestionRender from '../render/SubQuestionRender.js';
 const subQuestionRender = new SubQuestionRender();
 
 export default class SingleChoiceQuestion extends Question {
-  constructor(step, store, renderer, allSteps) {
+  constructor(step, store, renderer, allSteps=[],sources = {}) {
     super(step, store, renderer);
     this.allSteps = allSteps;
+    this.sources = sources; 
+    this.selectedOption = null;
     this.subQuestionInstance = null;
   }
 
@@ -27,19 +29,47 @@ export default class SingleChoiceQuestion extends Question {
     // Attacher l'instance au step pour ButtonNavigation
     this.step.component = this;
   }
+  buildAnswerObject() {
+    const answer = {
+      questionId: this.step.id,
+      type: 'single_choice',
+      value: this.selectedOption?.value ?? null,
+      label: this.selectedOption?.label ?? null
+    };
+    if (this.selectedOption?.precision) answer.precision = this.selectedOption.precision;
+
+    // Ajouter la sous-question si elle existe
+    if (this.subQuestionInstance) {
+      const subAnswer = this.subQuestionInstance.component?.getAnswer?.() ?? null;
+      if (subAnswer) {
+        answer.subAnswer = {
+          [this.subQuestionInstance.step.id]: subAnswer
+          // id: this.subQuestionInstance.step.id,
+          // value: subAnswer
+        };
+      }
+    }
+
+    return answer;
+  }
 
   onChange(selected) {
-    const answer = { value: selected.value, label: selected.label };
-    if (selected.precision) answer.precision = selected.precision;
+    const test= this.selectedOption = selected;
+console.log('test',test)
+    //const answer = { value: selected.value, label: selected.label };
+   // if (selected.precision) answer.precision = selected.precision;
 
     // Gérer sous-question
     if (selected.requiresSubQst?.value) {
-     answer.requiresSubQstId = selected.requiresSubQst.subQst_id;
+    // answer.requiresSubQstId = selected.requiresSubQst.subQst_id;
 
       const subStep = this.allSteps.find(s => s.id === selected.requiresSubQst.subQst_id);
+      console.log('subStep',subStep)
       if (subStep) {
        //subStep.isSubQuestion = true;
-        this.subQuestionInstance = new QuestionContent(subStep, this.allSteps, {}, 'sub-question-template');
+// Vérifier si c’est un autocomplete et récupérer les données
+const tableData = subStep.table ? { [subStep.table]: this.sources[subStep.table] || [] } : {};console.log('tableData',tableData)
+        this.subQuestionInstance = new QuestionContent(subStep, this.allSteps,  tableData, 'sub-question-template');
         this.subQuestionInstance.initComponent();
 
         // Pré-remplir si déjà existant
@@ -50,7 +80,9 @@ export default class SingleChoiceQuestion extends Question {
       this.subQuestionInstance = null;
     }
 
-    this.setAnswer(answer);
+    //this.setAnswer(answer);
+    // Sauvegarder la réponse principale avec buildAnswerObject
+    this.setAnswer(this.buildAnswerObject());
   }
 
   render() {
@@ -89,15 +121,24 @@ export default class SingleChoiceQuestion extends Question {
        // Mettre à jour UNIQUEMENT la réponse principale avec la sous-question imbriquée
         const mainAnswer = this.getAnswer() || {};
         mainAnswer.subAnswer = {
-          id: this.subQuestionInstance.step.id,
-          value: val
+          [this.subQuestionInstance.step.id]: val
+          // id: this.subQuestionInstance.step.id,
+          // value: val
         };
-        
+      
         // Sauvegarder UNIQUEMENT la réponse principale
         this.setAnswer(mainAnswer);
       };
     }
   }
+  getSourceData(step) {
+    if (step.type === 'autocomplete') {
+      // Retourner les données correspondant au step.table, ou via API
+      return this.sourceDataMap?.[step.table] || [];
+    }
+    return [];
+  }
+  
 }
 
 // export default class SingleChoiceQuestion extends Question{
