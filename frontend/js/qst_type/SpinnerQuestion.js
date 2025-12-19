@@ -1,19 +1,29 @@
 import Question from './Question.js';
 
 export default class SpinnerQuestion extends Question {
-  constructor(step, store, renderer) {
+  constructor(step, store, renderer, sourceData = []) {
     super(step, store, renderer);
-    this.value = '';
+    this.value = null;           // valeur sélectionnée
+    this.sourceData = sourceData; // options du spinner
+    this.onChangeBound = this.onChange.bind(this); // binding sûr pour l'event
   }
 
   init() {
-    // récupère la valeur depuis le store
-    this.value = this.getAnswer() || '';
+    const answer = this.getAnswer();
+    this.value = answer?.value ?? null;
   }
 
-  onChange(newValue) {
-    this.value = newValue;
-    this.setAnswer(this.value);
+  buildAnswerObject() {
+    return {
+      questionId: this.step.id,
+      type: 'spinner',
+      value: this.value
+    };
+  }
+
+  onChange(selectedValue) {
+    this.value = selectedValue;
+    this.setAnswer(this.buildAnswerObject());
   }
 
   render() {
@@ -22,38 +32,7 @@ export default class SpinnerQuestion extends Question {
     return this.renderer.renderSpinner(
       this.step,
       this.value,
-      (val) => this.onChange(val)
+      this.onChangeBound // utilise la version bindée
     );
   }
 }
-
-// import Question from './Question.js';
-
-// export default class SpinnerQuestion extends Question {
-//   constructor(step, store, renderer) {
-//     super(step, store, renderer);
-//     this.selected = null; // { codeItem, value }
-//   }
-
-//   init() {
-//     // récupère la valeur depuis le store
-//     this.selected = this.getAnswer() || null;
-//   }
-
-//   onChange(selectedValue) {
-//     // Trouver l'objet correspondant dans options
-//     const selectedObj = this.step.options.find(opt => opt.value === selectedValue) || null;
-//     this.selected = selectedObj;
-//     this.setAnswer(this.selected); // stocker l'objet entier
-//   }
-
-//   render() {
-//     this.init();
-//     // délègue le rendu au renderer
-//     return this.renderer.renderSpinner(
-//       this.step,
-//       this.selected?.value || '',
-//       (val) => this.onChange(val)
-//     );
-//   }
-// }

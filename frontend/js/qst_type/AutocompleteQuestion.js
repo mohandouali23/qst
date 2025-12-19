@@ -11,10 +11,16 @@ export default class AutocompleteQuestion extends Question {
     // récupère la valeur depuis le store
     this.selectedValue = this.getAnswer() || null;
   }
-
+  buildAnswerObject() {
+    return {
+      questionId: this.step.id,
+      type: 'autocomplete',
+      value: this.selectedValue
+    };
+  }
   onChange(item) {
     this.selectedValue = item;
-    this.setAnswer(this.selectedValue);
+   this.setAnswer(this.buildAnswerObject());
   }
 
   render() {

@@ -55,6 +55,7 @@ async function renderStep() {
 
       // Vérifier redirection
       if (step.redirection) {
+        console.log('step redirection',step.redirection)
         if (step.redirection.toUpperCase() === 'FIN') {
           console.log('Fin du questionnaire', QuestionContent.getStore().getAll());
           return; // stop navigation

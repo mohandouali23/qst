@@ -255,6 +255,29 @@
       "required": true,
       "isSubQuestion": false
     },
+     {
+      "id": "q12",
+      "title": "Q12bis.",
+      "type": "single_choice",
+      "label": "Fréquence d’utilisation du transport en commun",
+      "options": [
+        {
+          "codeItem": 1,
+          "label": "Tous les jours13"
+        },
+        {
+          "codeItem": 2,
+          "label": "Quelques fois par semaine24",
+          "requiresPrecision": true
+        }
+        
+      ],
+      "placeholder": "",
+      "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
+      
+      "required": true,
+      "isSubQuestion": false
+    },
     {
       "id": "q10",
       "title": "Q10bis.",

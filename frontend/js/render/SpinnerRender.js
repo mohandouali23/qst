@@ -29,45 +29,12 @@ export default class SpinnerRender {
     if (value) select.value = value;
 
     // Gestion du changement
-    select.addEventListener('change', (e) => onChange(e.target.value));
+    if (typeof onChange === 'function') {
+      select.addEventListener('change', (e) => onChange(e.target.value));
+    } else {
+      console.error('SpinnerRender: onChange n’est pas une fonction');
+    }
 
     return container;
   }
 }
-
-// export default class SpinnerRender {
-//   renderSpinner(step, selectedValue = '', onChange) {
-//     const template = document.getElementById('spinner-question-template');
-//     if (!template) {
-//       console.error('Template SpinnerQuestion non trouvé');
-//       return document.createElement('div');
-//     }
-
-//     const container = template.content.cloneNode(true).children[0];
-//     const select = container.querySelector('.spinner-select');
-
-//     // Ajouter un élément par défaut (placeholder)
-//     const defaultOption = document.createElement('option');
-//     defaultOption.value = '';
-//     defaultOption.disabled = true;
-//     defaultOption.selected = !selectedValue;
-//     defaultOption.textContent = step.placeholder || '';
-//     select.appendChild(defaultOption);
-
-//     // Ajouter les options réelles avec codeItem
-//     step.options.forEach(option => {
-//       const opt = document.createElement('option');
-//       opt.value = option.value;  // on utilise `value` pour le <select>
-//       opt.textContent = option.value;
-//       if (option.value === selectedValue) {
-//         opt.selected = true;
-//       }
-//       select.appendChild(opt);
-//     });
-
-//     // Gestion du changement
-//     select.addEventListener('change', (e) => onChange(e.target.value));
-
-//     return container;
-//   }
-// }
