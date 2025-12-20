@@ -15,30 +15,71 @@ export default class MultipleChoiceQuestion extends Question {
     this.subQuestionInstances = {};
     this.container = null;
   }
+init() {
+  const answer = this.getAnswer();
+  this.selectedValues = answer?.value || [];
 
-  init() {
-    const answer = this.getAnswer();
-    this.selectedValues = answer?.value || [];
+  // Réinitialiser les instances existantes
+  this.subQuestionInstances = {};
 
-    // Pré-créer les sous-questions pour toutes les options cochables qui ont une sous-question
-    this.step.options.forEach(option => {
-      if (option.requiresSubQst?.value) {
-        const subStep = this.allSteps.find(s => s.id === option.requiresSubQst.subQst_id);
-        if (subStep) {
-          const selectedObj = this.selectedValues.find(v => v.value === option.value);
-          if (selectedObj?.subAnswer) {
-            const instance = new QuestionContent(subStep, this.allSteps, {}, 'sub-question-template');
-            instance.initComponent();
-            instance.component?.setAnswer(selectedObj.subAnswer.instance.getAnswer());
-            this.subQuestionInstances[option.value] = instance;
-            selectedObj.subAnswer.instance = instance;
-          }
-        }
-      }
-    });
+  // Pré-créer les sous-questions pour toutes les options cochées avec sous-question
+  this.step.options.forEach(option => {
+    if (!option.requiresSubQst?.value) return;
 
-    this.step.component = this;
-  }
+    const selectedObj = this.selectedValues.find(v => v.value === option.value);
+    if (!selectedObj) return;
+
+    const subStep = this.allSteps.find(s => s.id === option.requiresSubQst.subQst_id);
+    if (!subStep) return;
+
+    // Créer l'instance de sous-question
+    const tableData = subStep.table ? { [subStep.table]: this.sources[subStep.table] || [] } : {};
+    const instance = new QuestionContent(subStep, this.allSteps, tableData, 'sub-question-template');
+    instance.initComponent();
+
+    // Restaurer la valeur précédente de la sous-question si elle existe
+    if (selectedObj.subAnswer?.instance?.component?.getAnswer) {
+      instance.component?.setAnswer(selectedObj.subAnswer.instance.getAnswer());
+    }
+
+    // Mettre à jour selectedValues et subQuestionInstances
+    selectedObj.subAnswer = { instance, value: selectedObj.subAnswer?.value || null };
+    this.subQuestionInstances[option.value] = instance;
+  });
+
+  this.step.component = this;
+}
+
+  // init() {
+  //   const answer = this.getAnswer();
+  //   this.selectedValues = answer?.value || [];
+
+  //   // Pré-créer les sous-questions pour toutes les options cochables qui ont une sous-question
+  //   this.step.options.forEach(option => {
+  //     if (option.requiresSubQst?.value) {
+  //       const subStep = this.allSteps.find(s => s.id === option.requiresSubQst.subQst_id);
+  //       if (subStep) {
+  //         const selectedObj = this.selectedValues.find(v => v.value === option.value);
+  //         if (selectedObj?.subAnswer) {
+  //           const instance = new QuestionContent(subStep, this.allSteps, {}, 'sub-question-template');
+  //           instance.initComponent();
+  //           if (selectedObj?.subAnswer?.instance?.getAnswer) {
+  //             instance.component?.setAnswer(selectedObj.subAnswer.instance.getAnswer());
+  //           }
+  //          // Mettre à jour subAnswer et subQuestionInstances
+  //       selectedObj.subAnswer.instance = instance;
+  //       this.subQuestionInstances[option.value] = instance;
+
+  //           // instance.component?.setAnswer(selectedObj.subAnswer.instance.getAnswer());
+  //           // this.subQuestionInstances[option.value] = instance;
+  //           // selectedObj.subAnswer.instance = instance;
+  //         }
+  //       }
+  //     }
+  //   });
+
+  //   this.step.component = this;
+  // }
 
   buildAnswerObject() {
     return {
@@ -154,35 +195,70 @@ export default class MultipleChoiceQuestion extends Question {
     this.renderSubQuestions(this.container);
     return this.container;
   }
+renderSubQuestions(container) {
+  Object.values(this.subQuestionInstances).forEach(subInstance => {
+    let subContainer = container.querySelector(`.sub-question-container[data-parent="${subInstance.parentValue}"]`);
 
-  renderSubQuestions(container) {
-    Object.values(this.subQuestionInstances).forEach(subInstance => {
-      let subContainer = container.querySelector(`.sub-question-container[data-parent="${subInstance.parentValue}"]`);
+    if (!subContainer) {
+      subContainer = subQuestionRender.renderSubQuestion(subInstance);
+      subContainer.dataset.parent = subInstance.parentValue;
+      container.appendChild(subContainer);
+    }
 
-      if (!subContainer) {
-        subContainer = subQuestionRender.renderSubQuestion(subInstance);
-        subContainer.dataset.parent = subInstance.parentValue;
-        container.appendChild(subContainer);
-      }
+    const comp = subInstance.component;
 
-      const comp = subInstance.component;
+    if (!comp.setAnswerOriginal) {
+      comp.setAnswerOriginal = comp.setAnswer?.bind(comp) || (val => {});
 
-      if (!comp.setAnswerOriginal) {
-        comp.setAnswerOriginal = comp.setAnswer?.bind(comp) || (val => {});
-        comp.setAnswer = (val) => {
-          comp.setAnswerOriginal(val);
-          const idx = this.selectedValues.findIndex(v => v.value === subInstance.parentValue);
-          if (idx >= 0) {
-            this.selectedValues[idx].subAnswer.instance.setAnswer(val);
-            this.setAnswer(this.buildAnswerObject());
-          }
-        };
-
+      comp.setAnswer = (val) => {
+        comp.setAnswerOriginal(val);
         const idx = this.selectedValues.findIndex(v => v.value === subInstance.parentValue);
-        if (idx >= 0 && this.selectedValues[idx].subAnswer?.value != null) {
-          comp.setAnswerOriginal(this.selectedValues[idx].subAnswer.value);
+        if (idx >= 0) {
+          this.selectedValues[idx].subAnswer.instance.setAnswer(val);
+          this.selectedValues[idx].subAnswer.value = val; // stocker la valeur
+          this.setAnswer(this.buildAnswerObject());
         }
+      };
+
+      // Restaurer la valeur précédente si elle existe
+      const idx = this.selectedValues.findIndex(v => v.value === subInstance.parentValue);
+      if (idx >= 0 && this.selectedValues[idx].subAnswer?.value != null) {
+        comp.setAnswerOriginal(this.selectedValues[idx].subAnswer.value);
       }
-    });
-  }
+    }
+  });
+}
+//   renderSubQuestions(container) {
+//     Object.values(this.subQuestionInstances).forEach(subInstance => {
+//       let subContainer = container.querySelector(`.sub-question-container[data-parent="${subInstance.parentValue}"]`);
+
+//       if (!subContainer) {
+//         subContainer = subQuestionRender.renderSubQuestion(subInstance);
+//         subContainer.dataset.parent = subInstance.parentValue;
+//         container.appendChild(subContainer);
+//       }
+
+//       const comp = subInstance.component;
+// console.log("comp",comp)
+//       if (!comp.setAnswerOriginal) {
+//         comp.setAnswerOriginal = comp.setAnswer?.bind(comp) || (val => { });
+//         comp.setAnswer = (val) => {
+//           comp.setAnswerOriginal(val);
+//           const idx = this.selectedValues.findIndex(v => v.value === subInstance.parentValue);
+//           if (idx >= 0) {
+//             this.selectedValues[idx].subAnswer.instance.setAnswer(val);
+//             this.selectedValues[idx].subAnswer.value = val; // <-- ajouté
+//             console.log(" this.selectedValues[idx].subAnswer.value = val;", this.selectedValues[idx].subAnswer)
+//             this.setAnswer(this.buildAnswerObject());
+            
+//           }
+//         };
+
+//         const idx = this.selectedValues.findIndex(v => v.value === subInstance.parentValue);
+//         if (idx >= 0 && this.selectedValues[idx].subAnswer?.value != null) {
+//           comp.setAnswerOriginal(this.selectedValues[idx].subAnswer.value);
+//         }
+//       }
+//     });
+//   }
 }

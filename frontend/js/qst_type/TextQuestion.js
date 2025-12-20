@@ -9,7 +9,8 @@ export default class TextQuestion extends Question {
   }
 
   init() {
-    this.value = this.getAnswer() ?? '';
+   const answer = this.getAnswer();
+  this.value = answer?.value ?? ''; 
   }
   buildAnswerObject() {
     return {

@@ -39,7 +39,7 @@
           "label": "Rarement",
           "requiresSubQst": {
             "value": true,
-            "subQst_id": "q9"
+            "subQst_id": "q6"
           }
         },
         {
@@ -74,7 +74,7 @@
           "label": "Bus",
           "requiresSubQst": {
             "value": true,
-            "subQst_id": "q12"
+            "subQst_id": "q13"
           }
         },
         {
@@ -114,6 +114,7 @@
       "redirection": "q4",
       "isSubQuestion": false
     },
+   
     {
       "id": "q4",
       "title": "Q4.",
@@ -162,10 +163,27 @@
       ],
       "placeholder": "Sélectionnez une option",
       "required": true,
-      "redirection": "FIN",
+      "redirection": "q14",
       "isSubQuestion": false
     },
 
+     {
+      "id": "q14",
+      "title": "Q14.",
+      "type": "spinner",
+      "label": "Choisissez votre région",
+      "options": [
+       
+    
+        "Est",
+        "Ouest",
+        "Centre"
+      ],
+      "placeholder": "Sélectionnez une option",
+      "required": true,
+      "redirection": "FIN",
+      "isSubQuestion": false
+    },
 
 
     {

@@ -1,5 +1,7 @@
+import PrecisionHandler from '../utils/PrecisionHandler.js';
 export default class SingleChoiceRender {
   renderSingleChoice(step, existingAnswer = null, onChange) {
+    console.log('exist', existingAnswer)
     const template = document.getElementById('single-choice-question-template');
     const precisionTemplate = document.getElementById('precision-input-template');
 
@@ -18,7 +20,7 @@ export default class SingleChoiceRender {
       input.name = step.id;
       input.value = option.codeItem;
 
-      if (existingAnswer && existingAnswer.value === option.codeItem) {
+      if (existingAnswer && existingAnswer.value?.codeItem === option.codeItem) {
         input.checked = true;
       }
 
@@ -28,47 +30,61 @@ export default class SingleChoiceRender {
       div.appendChild(input);
       div.appendChild(span);
 
-      let precisionContainer = null;
-
+      let precisionHandler = null;
       if (option.requiresPrecision) {
-        const precisionClone = precisionTemplate.content.cloneNode(true);
-        precisionContainer = precisionClone.querySelector('.precision-container');
-        const precisionInput = precisionContainer.querySelector('.precision-input');
-        precisionContainer.style.display = 'none';
-
-        if (existingAnswer && existingAnswer.value === option.codeItem && existingAnswer.precision) {
-          precisionInput.value = existingAnswer.precision;
-          precisionContainer.style.display = 'block';
-        }
-
-        precisionInput.addEventListener('input', e => {
+        precisionHandler = new PrecisionHandler(div, option, existingAnswer, (precision) => {
           onChange({
             value: option.codeItem,
             label: option.label,
-            precision: e.target.value || null
+            precision
           });
         });
-
-        div.appendChild(precisionContainer);
       }
+      // Si l’option est déjà cochée et nécessite précision, afficher le champ
+      if (input.checked && precisionHandler) {
+        precisionHandler.show();
+      }
+      //let precisionContainer = null;
+      // if (option.requiresPrecision) {
+      //   const precisionClone = precisionTemplate.content.cloneNode(true);
+      //   precisionContainer = precisionClone.querySelector('.precision-container');
+      //   const precisionInput = precisionContainer.querySelector('.precision-input');
+      //   precisionContainer.style.display = 'none';
+
+      //   if (existingAnswer && existingAnswer.value === option.codeItem && existingAnswer.precision) {
+      //     precisionInput.value = existingAnswer.precision;
+      //     precisionContainer.style.display = 'block';
+      //   }
+
+      //   precisionInput.addEventListener('input', e => {
+      //     onChange({
+      //       value: option.codeItem,
+      //       label: option.label,
+      //       precision: e.target.value || null
+      //     });
+      //   });
+
+      //   div.appendChild(precisionContainer);
+      // }
 
       input.addEventListener('change', () => {
         optionsContainer.querySelectorAll('.precision-container')
           .forEach(pc => pc.style.display = 'none');
 
-        if (precisionContainer && input.checked) {
-          precisionContainer.style.display = 'block';
-        }
-
-        const precisionValue = precisionContainer
-          ? precisionContainer.querySelector('.precision-input').value || null
-          : null;
+        // if (precisionContainer && input.checked) {
+        //   precisionContainer.style.display = 'block';
+        // }
+        if (precisionHandler && input.checked) precisionHandler.show();
+        // const precisionValue = precisionContainer
+        //   ? precisionContainer.querySelector('.precision-input').value || null
+        //   : null;
 
         // On envoie un objet complet contenant value, label et precision
         onChange({
           value: option.codeItem,
           label: option.label,
-          precision: precisionValue,
+          precision: precisionHandler?.getValue() || null,
+          // precision: precisionValue,
           requiresSubQst: option.requiresSubQst || null
         });
       });

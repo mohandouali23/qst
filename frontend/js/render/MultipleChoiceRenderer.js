@@ -1,3 +1,4 @@
+import PrecisionHandler from '../utils/PrecisionHandler.js';
 export default class MultipleChoiceRenderer {
   renderMultipleChoice(step, selectedValues, onChange) {
     const template = document.getElementById('multiple-choice-question-template');
@@ -48,16 +49,16 @@ export default class MultipleChoiceRenderer {
       checkbox.addEventListener('change', e => {
         const isChecked = e.target.checked;
 
-        // Afficher ou cacher le champ precision pour cette option
+       // Afficher ou cacher le champ precision pour cette option
         if (precisionContainer) {
           precisionContainer.style.display = isChecked ? 'block' : 'none';
         }
 
-        // Appeler onChange pour gérer exclusive + store
+//        Appeler onChange pour gérer exclusive + store
         const precisionValue = precisionInput ? (precisionInput.value.trim() || null) : null;
         onChange(option)(isChecked, precisionValue);
 
-        // Après avoir appliqué la règle exclusive, synchroniser les precision
+       // Après avoir appliqué la règle exclusive, synchroniser les precision
         step.options.forEach(opt => {
           const cb = optionsContainer.querySelector(`input[value="${opt.value}"]`);
           const pc = cb?.parentElement.querySelector('.precision-container');
