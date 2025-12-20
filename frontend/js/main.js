@@ -48,8 +48,9 @@ async function renderStep() {
   app.appendChild(node);
 
   // Navigation avec validation et stockage
-  new ButtonNavigation(node, step, {
+ const nav = new ButtonNavigation(node, step, {
     onNext: (value) => {
+      console.log('answer validée', value);
       // sauvegarde dans le store global
       QuestionContent.getStore().set(step.id, value);
 
@@ -82,6 +83,7 @@ async function renderStep() {
       renderStep();
     }
   });
+  nav.questionContent = questionContent;
 }
 
 // Initialisation

@@ -1,5 +1,7 @@
 import Question from './Question.js';
 
+import { showToast } from '../utils/toast.js';
+
 export default class SpinnerQuestion extends Question {
   constructor(step, store, renderer, sourceData = []) {
     super(step, store, renderer);
@@ -24,6 +26,13 @@ export default class SpinnerQuestion extends Question {
   onChange(selectedValue) {
     this.value = selectedValue;
     this.setAnswer(this.buildAnswerObject());
+  }
+isValid() {
+    if (this.value === null || this.value === undefined || (typeof this.value === 'string' && this.value.trim() === '')) {
+      showToast('Veuillez sélectionner une option');
+      return false;
+    }
+    return true;
   }
 
   render() {

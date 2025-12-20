@@ -74,7 +74,7 @@
           "label": "Bus",
           "requiresSubQst": {
             "value": true,
-            "subQst_id": "q9"
+            "subQst_id": "q12"
           }
         },
         {
@@ -253,7 +253,7 @@
       "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
       
       "required": true,
-      "isSubQuestion": false
+      "isSubQuestion": true
     },
      {
       "id": "q12",
@@ -276,7 +276,7 @@
       "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
       
       "required": true,
-      "isSubQuestion": false
+      "isSubQuestion": true
     },
     {
       "id": "q10",

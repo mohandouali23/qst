@@ -56,6 +56,14 @@ export default class QuestionContent extends Question {
   static getStore() {
     return store;
   }
+
+  isValid() {
+    return this.component?.isValid?.() ?? true;
+  }
+
+  getAnswer() {
+    return this.component?.getAnswer?.() ?? null;
+  } 
   initComponent() {
     const existingAnswer = store.get(this.step.id);
 
@@ -85,6 +93,7 @@ export default class QuestionContent extends Question {
       default:
         console.error('Type inconnu :', this.step.type);
     }
+    
 
     // Pré-remplissage automatique
     if (existingAnswer && this.component?.setAnswer) {

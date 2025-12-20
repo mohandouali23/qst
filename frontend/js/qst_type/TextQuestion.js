@@ -1,5 +1,7 @@
 import Question from './Question.js';
 
+import { showToast } from '../utils/toast.js';
+
 export default class TextQuestion extends Question {
   constructor(step, store, renderer) {
     super(step, store, renderer);
@@ -7,10 +9,7 @@ export default class TextQuestion extends Question {
   }
 
   init() {
-    //this.value = this.getAnswer() ?? '';
-
-    const answer = this.getAnswer();
-    this.value = answer?.value ?? '';
+    this.value = this.getAnswer() ?? '';
   }
   buildAnswerObject() {
     return {
@@ -26,24 +25,15 @@ export default class TextQuestion extends Question {
     this.buildAnswerObject()
   );
   }
-
-  isValid() {
+   isValid() {
     if (!this.step.required) return true;
 
-    if (typeof this.value !== 'string') return false;
-    if (this.value.trim() === '') return false;
-
-    if (this.step.minLength && this.value.length < this.step.minLength) {
+    if (!this.value || this.value.trim() === '') {
+      showToast('Veuillez remplir ce champ');
       return false;
     }
-
-    if (this.step.maxLength && this.value.length > this.step.maxLength) {
-      return false;
-    }
-
     return true;
   }
-
   render() {
     this.init();
 

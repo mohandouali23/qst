@@ -1,4 +1,5 @@
 import Question from './Question.js';
+import { showToast } from '../utils/toast.js';
 
 export default class AutocompleteQuestion extends Question {
   constructor(step, store, renderer, sourceData = []) {
@@ -22,7 +23,17 @@ export default class AutocompleteQuestion extends Question {
     this.selectedValue = item;
    this.setAnswer(this.buildAnswerObject());
   }
-
+isValid() {
+    if (
+      this.selectedValue === null ||
+      this.selectedValue === undefined ||
+      (typeof this.selectedValue === 'string' && this.selectedValue.trim() === '')
+    ) {
+      showToast('Veuillez choisir une valeur dans la liste');
+      return false;
+    }
+    return true;
+  }
   render() {
     this.init();
     return this.renderer.renderAutocomplete(
