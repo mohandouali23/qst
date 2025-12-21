@@ -328,7 +328,7 @@
       "input_cond": "",
       "output_cond": "value !== null",
       "required": true,
-      "isSubQuestion": false
+      "isSubQuestion": true
     }
   ]
 }
