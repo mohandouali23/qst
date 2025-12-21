@@ -16,6 +16,7 @@ async function initTemplates() {
     './html/qst_type/AutocompleteQuestion.html',
     './html/qst_type/SpinnerQuestion.html',
     './html/qst_type/question-template.html',
+    './html/qst_type/GridQuestion.html',
     './html/utils/SubQuestion.html',
     './html/utils/PrecisionField.html'
   ];

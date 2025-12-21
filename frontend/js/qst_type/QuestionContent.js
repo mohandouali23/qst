@@ -3,7 +3,9 @@ import MultipleChoiceQuestion from './MultipleChoiceQuestion.js';
 import TextQuestion from './TextQuestion.js';
 import SingleChoiceQuestion from './SingleChoiceQuestion.js';
 import AutocompleteQuestion from './AutocompleteQuestion.js';
+import GridQuestion from './GridQuestion.js';
 
+import GridRender from '../render/GridRender.js';
 import MultipleChoiceRenderer from '../render/MultipleChoiceRenderer.js';
 import TextRender from '../render/TextRender.js';
 import SingleChoiceRender from '../render/SingleChoiceRender.js';
@@ -21,6 +23,7 @@ const renderers = {
   single_choice: new SingleChoiceRender(),
   autoComplete: new AutoCompleteRender(),
   spinner: new SpinnerRender(),
+  grid: new GridRender()
 };
 const TEMPLATE_CONFIG = {
   'question-template': {
@@ -89,7 +92,10 @@ export default class QuestionContent extends Question {
         this.component = new AutocompleteQuestion(this.step, store, renderers.autoComplete, tableData);
         break;
       }
-
+      case 'grid':{
+        this.component = new GridQuestion( this.step,store, renderers.grid);
+        break;
+      }
       default:
         console.error('Type inconnu :', this.step.type);
     }

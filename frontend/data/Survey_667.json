@@ -13,12 +13,61 @@
       "label": "Quel est votre moyen de transport principal ?",
       "placeholder": "Ex : Bus, Train, Voiture...",
       "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
-      "redirection": "q2",
+      "redirection": "q20",
       "input_cond": "",
       "output_cond": "value.length > 0",
       "required": true,
       "isSubQuestion": false
     },
+    {
+      "id": "q20",
+      "type": "grid",
+      "title": "Q20.",
+      "label": "À quelle fréquence utilisez-vous les moyens de transport suivants ?",
+      "redirection": "q22",
+      "required": true,
+    
+      "rows": [
+        { "id": "bus", "label": "Bus" },
+        { "id": "train", "label": "Train" },
+        { "id": "metro", "label": "Métro" }
+      ],
+    
+      "columns": [
+        { "value": "daily", "label": "Tous les jours" },
+        { "value": "weekly", "label": "Quelques fois par semaine" },
+        { "value": "rarely", "label": "Rarement" },
+        { "value": "never", "label": "Jamais", "exclusive": true }
+      ],
+    
+     "rules": {
+  "onePerRow": false, 
+  "requiredRows": ["bus", "train"]
+}
+    },
+    {
+      "id": "q22",
+      "type": "grid",
+      "title": "Q22.",
+      "label": "Quels services utilisez-vous dans votre ville ? (plusieurs réponses possibles)",
+      "required": true,
+      "redirection": "q2",
+      "rows": [
+        { "id": "transport", "label": "Transports en commun" },
+        { "id": "parking", "label": "Parking public" },
+        { "id": "velib", "label": "Vélos en libre-service" }
+      ],
+      "columns": [
+        { "value": "yes", "label": "Oui" },
+        { "value": "no", "label": "Non" }
+      ],
+      "rules": {
+        "onePerRow": true,
+        "requiredRows": ["transport"]
+      }
+    },
+    
+    
     {
       "id": "q2",
       "title": "Q2.",
@@ -329,6 +378,35 @@
       "output_cond": "value !== null",
       "required": true,
       "isSubQuestion": true
+    },
+    {
+      "id": "q25",
+      "type": "grid",
+      "title": "Q20.",
+      "label": "À quelle fréquence utilisez-vous les moyens de transport suivants ?",
+      "redirection": "q22",
+      "required": true,
+    
+      "rows": [
+        { "id": "bus", "label": "Bus" },
+        { "id": "train", "label": "Train" },
+        { "id": "metro", "label": "Métro" }
+      ],
+    
+      "columns": [
+        { "value": "daily", "label": "Tous les jours" },
+        { "value": "weekly", "label": "Quelques fois par semaine" },
+        { "value": "rarely", "label": "Rarement" },
+        { "value": "never", "label": "Jamais", "exclusive": true }
+      ],
+    
+     "rules": {
+  "onePerRow": false, 
+  "requiredRows": ["bus", "train"],
+  "forbiddenCombinations": [
+    { "row": "bus", "value": "never" }
+  ]
+}
     }
   ]
 }

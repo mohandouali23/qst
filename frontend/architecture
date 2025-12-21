@@ -1,28 +1,35 @@
-/js
- ├─ qst_type/                  # Logique métier et classes de base
- │   ├─ Question.js         # Classe de base pour toutes les questions
- │   ├─ TextQuestion.js     # Texte libre
- │   ├─ SingleChoiceQuestion.js
- │   ├─ MultipleChoiceQuestion.js
- │   ├─ AutocompleteQuestion.js
- │   ├─ SpinnerQuestion.js
- │
- ├─ rules/                 # Règles métier indépendantes
- │   ├─ ExclusiveRule.js    # Pour les options “Aucun”, “Jamais”
- │
- │
- ├─ store/                 # Gestion globale des réponses
- │   ├─ AnswerStore.js
- │
- ├─ render/                    # Tout ce qui touche à l’UI
- │   ├─ textRender.js
- │  
- │
- ├─ utils/                  # Fonctions utilitaires
- │   ├─ JSONLoader.js       # Charger différents templates
- │
- └─ main.js                
+// /js
+//  ├─ qst_type/                  # Logique métier et classes de base
+//  │   ├─ Question.js         # Classe de base pour toutes les questions
+//  │   ├─ TextQuestion.js     # Texte libre
+//  │   ├─ SingleChoiceQuestion.js
+//  │   ├─ MultipleChoiceQuestion.js
+//  │   ├─ AutocompleteQuestion.js
+//  │   ├─ SpinnerQuestion.js
+//  │
+//  ├─ rules/                 # Règles métier indépendantes
+//  │   ├─ ExclusiveRule.js    # Pour les options “Aucun”, “Jamais”
+//  │
+//  │
+//  ├─ store/                 # Gestion globale des réponses
+//  │   ├─ AnswerStore.js
+//  │
+//  ├─ render/                    # Tout ce qui touche à l’UI
+//  │   ├─ textRender.js
+//  │  
+//  │
+//  ├─ utils/                  # Fonctions utilitaires
+//  │   ├─ JSONLoader.js       # Charger différents templates
+//  │
+//  └─ main.js                
 
+//  "rules": {
+//     "onePerRow": true,  Impose une seule réponse par ligne
+//     "requiredRows": ["bus", "train"],  Réponse obligatoire
+//     "forbiddenCombinations": [ Interdit certaines valeurs pour certaines lignes
+//       { "row": "bus", "value": "never" }
+//     ]
+//   }
 // import Question from './Question.js';
 // import QuestionContent from './QuestionContent.js';
 // import SubQuestionRender from '../render/SubQuestionRender.js';
