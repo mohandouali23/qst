@@ -1,0 +1,45 @@
+/* ===== Desktop (par défaut) ===== */
+
+  /* Options */
+  .single-choice-question .options-container {
+    display: flex;
+    flex-direction: column;
+
+  }
+  .single-choice-question .options-container div {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+  }
+  
+  .single-choice-question .options-container span {
+    font-size: 20px;
+  }
+  
+  /* ===== Tablette ===== */
+  @media (max-width: 1024px) and (min-width: 600px) {
+    .single-choice-question .single-choice-question {
+      padding: 10px;
+      gap: 10px;
+    }
+    .single-choice-question .options-container span {
+      font-size: 16px;
+    }
+  }
+  
+  /* ===== Mobile ===== */
+  @media (max-width: 599px) {
+    .single-choice-question .single-choice-question {
+      gap: 10px;
+    }
+  
+    .single-choice-question .options-container div {
+      gap: 6px;
+    }
+  
+    .single-choice-question  .options-container span {
+      font-size: 14px;
+    }
+  }
+  

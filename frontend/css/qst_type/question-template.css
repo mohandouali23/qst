@@ -1,0 +1,102 @@
+/* Conteneur global de la question */
+.question-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 24px;
+    box-sizing: border-box;
+    justify-content: space-between; /* haut et bas */
+    border-radius: 8px;
+}
+
+/* Partie 1 : header */
+.question-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.question-num {
+    font-weight: 600;
+    font-size: 20px;
+    color:var(--primary-color) ;
+    min-width: 40px;
+}
+
+.question-text {
+    font-weight: 500;
+    font-size: 24px;
+  color: var(--text-color);
+}
+
+/* Partie 2 : contenu */
+.question-content {
+    flex-grow: 1; /* prend tout l'espace restant */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    
+}
+
+.question-content input[type="text"],
+.question-content input[type="radio"],
+.question-content input[type="checkbox"],
+.question-content select {
+    font-size: 18px;
+    padding: 8px;
+}
+
+/* Partie 3 : zone libre */
+.question-extra {
+    margin: 12px 0;
+    min-height: 100px; /* pour mettre image ou autre contenu */
+}
+
+/* Partie 4 : boutons navigation */
+.button-navigation {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 0;
+    border-top: 1px solid #ccc;
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+}
+
+.button-navigation button {
+    flex: 1;
+    width: -webkit-fill-available;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    color: white;
+    background-color: #1976d2;
+    transition: background-color 0.2s;
+}
+
+.button-navigation button:hover {
+    background-color: #125aa0;
+}
+
+.button-navigation .prev-btn {
+    background-color: #888;
+}
+
+.button-navigation .prev-btn:hover {
+    background-color: #555;
+}
+
+/* Responsive */
+@media (max-width: 599px) {
+    .button-navigation {
+        flex-direction: column-reverse;
+    }
+
+    .button-navigation button {
+        width: 100%;
+    }
+}

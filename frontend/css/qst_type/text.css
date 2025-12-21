@@ -1,0 +1,40 @@
+/* ===== Desktop (par défaut) ===== */
+.text-question {
+    display: flex;
+    flex-direction: column;
+   
+   
+  }
+  .text-question .question-input {
+    padding: 8px 10px;
+    font-size: 18px;
+  }
+  
+  
+  /* ===== Tablette ===== */
+  @media (max-width: 1024px) and (min-width: 600px) {
+    .text-question {
+      
+      gap: 10px;
+    }
+  
+  
+    .text-question .question-input {
+      font-size: 14px;
+      padding: 7px 9px;
+    }
+  
+    
+  }
+  
+  /* ===== Mobile ===== */
+  @media (max-width: 599px) {
+    .text-question {
+      gap: 10px;
+    }
+  
+
+  
+    
+  }
+  

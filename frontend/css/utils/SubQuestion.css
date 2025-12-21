@@ -1,0 +1,68 @@
+/* ===== Base (desktop & tablette large) ===== */
+.sub-question-container {
+    padding: 10px 12px;
+    background-color: #fafafa;
+    border-radius: 4px;
+    font-size: 1.1rem;
+  }
+  
+  .sub-question-header {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  
+  .sub-question-num {
+    color: #888;
+    min-width: 18px;
+  }
+  
+  .sub-question-text {
+    color: #333;
+  }
+  
+  .sub-question-content,
+  .sub-question-extra {
+    margin-left: 22px;
+  }
+  
+  /* ===== Tablette (≤ 768px) ===== */
+  @media (max-width: 768px) {
+    .sub-question-container {
+      padding: 10px;
+      font-size: 0.88rem;
+    }
+  
+    .sub-question-content,
+    .sub-question-extra {
+      margin-left: 16px;
+    }
+  }
+  
+  /* ===== Mobile (≤ 480px) ===== */
+  @media (max-width: 480px) {
+    .sub-question-container {
+      padding: 8px;
+      border-left: 2px solid #e0e0e0;
+      font-size: 0.85rem;
+    }
+  
+    .sub-question-header {
+      flex-direction: column;
+      gap: 2px;
+    }
+  
+    .sub-question-num {
+      min-width: auto;
+      font-size: 0.75rem;
+      color: #999;
+    }
+  
+    .sub-question-content,
+    .sub-question-extra {
+      margin-left: 0;
+      margin-top: 6px;
+    }
+  }
+  

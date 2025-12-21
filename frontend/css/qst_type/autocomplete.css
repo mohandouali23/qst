@@ -1,0 +1,41 @@
+.autocomplete-question {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position:relative;
+   
+  }
+
+  .autocomplete-question .autocomplete-input {
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    
+  }
+  
+  .autocomplete-question .autocomplete-suggestions {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #ccc;
+    border-top: none;
+    max-height: 150px;
+    overflow-y: auto;
+    display: none; /* caché par défaut */
+    background-color: #fff;
+    position: relative;
+    z-index: 100;
+  }
+  
+  .autocomplete-question .autocomplete-suggestions li {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 18px;
+    border-bottom: 0.1px solid #e9e9e9;
+  }
+  
+  .autocomplete-question .autocomplete-suggestions li:hover {
+    background-color: #f0f0f0;
+  }
+  
