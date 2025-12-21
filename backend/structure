@@ -1,0 +1,7 @@
+survey-backend/
+├─ models/
+│  └─ Response.js
+├─ routes/
+│  └─ responseRoutes.js
+├─ .env
+└─ server.js

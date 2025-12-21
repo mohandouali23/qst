@@ -47,7 +47,8 @@ export default class MultipleChoiceQuestion extends Question {
       );
   
       instance.initComponent();
-  
+      instance.parentValue = option.value;
+      console.log(" instance.parentValue", instance.parentValue)
       //  RESTAURATION DE LA VALEUR (DATA → UI)
       if (subAnswerData && instance.component?.setAnswer) {
         instance.component.setAnswer(subAnswerData);
