@@ -47,48 +47,20 @@ optionsContainer.innerHTML = '';
       if (input.checked && precisionHandler) {
         precisionHandler.show();
       }
-      //let precisionContainer = null;
-      // if (option.requiresPrecision) {
-      //   const precisionClone = precisionTemplate.content.cloneNode(true);
-      //   precisionContainer = precisionClone.querySelector('.precision-container');
-      //   const precisionInput = precisionContainer.querySelector('.precision-input');
-      //   precisionContainer.style.display = 'none';
-
-      //   if (existingAnswer && existingAnswer.value === option.codeItem && existingAnswer.precision) {
-      //     precisionInput.value = existingAnswer.precision;
-      //     precisionContainer.style.display = 'block';
-      //   }
-
-      //   precisionInput.addEventListener('input', e => {
-      //     onChange({
-      //       value: option.codeItem,
-      //       label: option.label,
-      //       precision: e.target.value || null
-      //     });
-      //   });
-
-      //   div.appendChild(precisionContainer);
-      // }
-
+     
       input.addEventListener('change', () => {
         optionsContainer.querySelectorAll('.precision-container')
           .forEach(pc => pc.style.display = 'none');
-
-        // if (precisionContainer && input.checked) {
-        //   precisionContainer.style.display = 'block';
-        // }
         if (precisionHandler && input.checked) precisionHandler.show();
-        // const precisionValue = precisionContainer
-        //   ? precisionContainer.querySelector('.precision-input').value || null
-        //   : null;
-
+    
         // On envoie un objet complet contenant value, label et precision
         onChange({
           value: option.codeItem,
           label: option.label,
-          precision: precisionHandler?.getValue() || null,
-          // precision: precisionValue,
-          requiresSubQst: option.requiresSubQst || null
+          ...(precisionHandler?.getValue() !== undefined && { precision: precisionHandler.getValue() }),
+          ...(option.requiresSubQst && { requiresSubQst: option.requiresSubQst })
+          // precision: precisionHandler?.getValue() || null,
+          // requiresSubQst: option.requiresSubQst || null
         });
       });
 

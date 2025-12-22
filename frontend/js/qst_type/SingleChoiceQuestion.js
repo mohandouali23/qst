@@ -81,7 +81,7 @@ export default class SingleChoiceQuestion extends Question {
       value: {
         codeItem: this.selectedOption.codeItem,
         label: this.selectedOption.label,
-        precision: this.selectedOption.precision || null
+        ...(this.selectedOption.precision?.trim() && { precision: this.selectedOption.precision })
       }
     };
 
@@ -93,11 +93,15 @@ export default class SingleChoiceQuestion extends Question {
 
     return answer;
   }
-
   /************** GESTION UTILISATEUR **************/
   onChange(selected) {
     this.selectedOption = this.step.options.find(o => o.codeItem === selected.value);
-    if (selected.precision) this.selectedOption.precision = selected.precision;
+    // Gestion précision uniquement si elle existe et n'est pas vide
+  if (selected.precision?.trim()) {
+    this.selectedOption.precision = selected.precision;
+  } else {
+    delete this.selectedOption.precision; // Supprimer la clé si vide
+  }
 
     if (!this.step.parentQuestionId && selected.requiresSubQst?.value) {
       const subStep = this.allSteps.find(s => s.id === selected.requiresSubQst.subQst_id);
