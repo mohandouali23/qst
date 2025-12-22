@@ -1,7 +1,11 @@
-survey-backend/
-├─ models/
-│  └─ Response.js
-├─ routes/
-│  └─ responseRoutes.js
-├─ .env
-└─ server.js
+backend/
+│
+├─ models/           → définition des modèles Mongoose (schéma de données)
+│   └─ Response.js
+│
+├─ routes/           → définition des routes API (endpoints)
+│   └─ responseRoutes.js
+│
+├─ .env              → configuration (MongoDB URI, port)
+│
+└─ server.js         → point d’entrée du serveur, initialise Express et MongoDB

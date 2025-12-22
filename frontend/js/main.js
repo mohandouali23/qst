@@ -1,6 +1,7 @@
 import QuestionContent from './qst_type/QuestionContent.js';
 import { loadTemplate, loadJSON } from './utils/JSONLoader.js';
 import ButtonNavigation from './utils/ButtonNavigation.js';
+import { saveAllResponses } from '../api.js';
 
 //const answers = {};
 let currentStep = 0;
@@ -50,7 +51,7 @@ async function renderStep() {
 
   // Navigation avec validation et stockage
  const nav = new ButtonNavigation(node, step, {
-    onNext: (value) => {
+    onNext: async (value) => {
       console.log('answer validée', value);
       // sauvegarde dans le store global
       QuestionContent.getStore().set(step.id, value);
@@ -60,6 +61,13 @@ async function renderStep() {
         console.log('step redirection',step.redirection)
         if (step.redirection.toUpperCase() === 'FIN') {
           console.log('Fin du questionnaire', QuestionContent.getStore().getAll());
+
+          // Récupérer toutes les réponses stockées
+      // const allAnswers = Object.values(QuestionContent.getStore().getAll());
+
+      // // Appeler l'API pour sauvegarder toutes les réponses
+      // await saveAllResponses('survey_667', 'user_test_all', allAnswers);
+
           return; // stop navigation
         }
 
@@ -76,7 +84,14 @@ async function renderStep() {
       // sinon prochaine question
       currentStep++;
       if (currentStep < survey.steps.length) renderStep();
-      else console.log('Fin questionnaire', QuestionContent.getStore().getAll());
+      else{
+        console.log('Fin questionnaireTT', QuestionContent.getStore().getAll());
+            // Sauvegarde finale pour toutes les réponses
+    // const allAnswers = Object.values(QuestionContent.getStore().getAll());
+    // await saveAllResponses('survey_667', 'user_test_all', allAnswers);
+
+      }
+      
     },
     onPrevious: () => {
       if (currentStep === 0) return;

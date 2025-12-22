@@ -13,66 +13,19 @@
       "label": "Quel est votre moyen de transport principal ?",
       "placeholder": "Ex : Bus, Train, Voiture...",
       "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
-      "redirection": "q20",
+      "redirection": "q2",
       "input_cond": "",
       "output_cond": "value.length > 0",
       "required": true,
-      "isSubQuestion": false
+      "isSubQuestion": false,
+      "page": 1
     },
-    {
-      "id": "q20",
-      "type": "grid",
-      "title": "Q20.",
-      "label": "À quelle fréquence utilisez-vous les moyens de transport suivants ?",
-      "redirection": "q22",
-      "required": true,
-    
-      "rows": [
-        { "id": "bus", "label": "Bus" },
-        { "id": "train", "label": "Train" },
-        { "id": "metro", "label": "Métro" }
-      ],
-    
-      "columns": [
-        { "value": "daily", "label": "Tous les jours" },
-        { "value": "weekly", "label": "Quelques fois par semaine" },
-        { "value": "rarely", "label": "Rarement" },
-        { "value": "never", "label": "Jamais", "exclusive": true }
-      ],
-    
-     "rules": {
-  "onePerRow": false, 
-  "requiredRows": ["bus", "train"]
-}
-    },
-    {
-      "id": "q22",
-      "type": "grid",
-      "title": "Q22.",
-      "label": "Quels services utilisez-vous dans votre ville ? (plusieurs réponses possibles)",
-      "required": true,
-      "redirection": "q2",
-      "rows": [
-        { "id": "transport", "label": "Transports en commun" },
-        { "id": "parking", "label": "Parking public" },
-        { "id": "velib", "label": "Vélos en libre-service" }
-      ],
-      "columns": [
-        { "value": "yes", "label": "Oui" },
-        { "value": "no", "label": "Non" }
-      ],
-      "rules": {
-        "onePerRow": true,
-        "requiredRows": ["transport"]
-      }
-    },
-    
-    
     {
       "id": "q2",
       "title": "Q2.",
       "type": "single_choice",
       "label": "Fréquence d’utilisation du transport en commun",
+      "page": 4,
       "options": [
         {
           "codeItem": 1,
@@ -107,15 +60,63 @@
       ],
       "placeholder": "",
       "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
-      "redirection": "q3",
+      "redirection": "q20",
       "required": true,
       "isSubQuestion": false
     },
+    {
+      "id": "q20",
+      "type": "grid",
+      "title": "Q20.",
+      "label": "À quelle fréquence utilisez-vous les moyens de transport suivants ?",
+      "redirection": "q22",
+      "required": true,
+      "page": 2,
+      "rows": [
+        { "id": "bus", "label": "Bus" },
+        { "id": "train", "label": "Train" },
+        { "id": "metro", "label": "Métro" }
+      ],
+      "columns": [
+        { "value": "daily", "label": "Tous les jours" },
+        { "value": "weekly", "label": "Quelques fois par semaine" },
+        { "value": "rarely", "label": "Rarement" },
+        { "value": "never", "label": "Jamais", "exclusive": true }
+      ],
+      "rules": {
+        "onePerRow": false,
+        "requiredRows": ["bus", "train"]
+      }
+    },
+    {
+      "id": "q22",
+      "type": "grid",
+      "title": "Q22.",
+      "label": "Quels services utilisez-vous dans votre ville ? (plusieurs réponses possibles)",
+      "required": true,
+      "redirection": "q3",
+      "page": 3,
+      "rows": [
+        { "id": "transport", "label": "Transports en commun" },
+        { "id": "parking", "label": "Parking public" },
+        { "id": "velib", "label": "Vélos en libre-service" }
+      ],
+      "columns": [
+        { "value": "yes", "label": "Oui" },
+        { "value": "no", "label": "Non" }
+      ],
+      "rules": {
+        "onePerRow": true,
+        "requiredRows": ["transport"]
+      }
+    },
+    
     {
       "id": "q3",
       "title": "Q3.",
       "type": "multiple_choice",
       "label": "Quels transports utilisez-vous ?",
+      "page": 5,
       "options": [
         {
           "codeItem": 1,
@@ -163,32 +164,17 @@
       "redirection": "q4",
       "isSubQuestion": false
     },
-   
     {
       "id": "q4",
       "title": "Q4.",
       "type": "autocomplete",
       "label": "Votre commune de résidence",
+      "page": 6,
       "table": "communes",
       "columns": [
-        {
-          "name": "commune",
-          "displayInList": true,
-          "displayInInput": true,
-          "saveInDB": true
-        },
-        {
-          "name": "cp",
-          "displayInList": true,
-          "displayInInput": true,
-          "saveInDB": true
-        },
-        {
-          "name": "_id",
-          "displayInList": false,
-          "displayInInput": false,
-          "saveInDB": true
-        }
+        { "name": "commune", "displayInList": true, "displayInInput": true, "saveInDB": true },
+        { "name": "cp", "displayInList": true, "displayInInput": true, "saveInDB": true },
+        { "name": "_id", "displayInList": false, "displayInInput": false, "saveInDB": true }
       ],
       "placeholder": "Tapez pour rechercher votre commune",
       "help_text": "Commencez à taper et sélectionnez la commune correspondante",
@@ -203,50 +189,36 @@
       "title": "Q5.",
       "type": "spinner",
       "label": "Choisissez votre région",
-      "options": [
-       
-        "Sud",
-        "Est",
-        "Ouest",
-        "Centre"
-      ],
+      "page": 7,
+      "options": ["Sud", "Est", "Ouest", "Centre"],
       "placeholder": "Sélectionnez une option",
       "required": true,
       "redirection": "q14",
       "isSubQuestion": false
     },
-
-     {
+    {
       "id": "q14",
       "title": "Q14.",
       "type": "spinner",
       "label": "Choisissez votre région",
-      "options": [
-       
-    
-        "Est",
-        "Ouest",
-        "Centre"
-      ],
+      "page": 8,
+      "options": ["Est", "Ouest", "Centre"],
       "placeholder": "Sélectionnez une option",
       "required": true,
       "redirection": "FIN",
       "isSubQuestion": false
     },
+   
 
 
+
+    
     {
       "id": "q6",
       "title": "Q6bis.",
       "type": "spinner",
       "label": "Choisissez votre région",
-      "options": [
-        "Nord22",
-        "Sud35",
-        "Est5",
-        "Ouest8",
-        "Centre87"
-      ],
+      "options": ["Nord22", "Sud35", "Est5", "Ouest8", "Centre87"],
       "placeholder": "Sélectionnez une option",
       "required": true,
       "isSubQuestion": true
@@ -269,34 +241,13 @@
       "type": "multiple_choice",
       "label": "Quels transports utilisez-vous ?",
       "options": [
-        {
-          "codeItem": 1,
-          "value": "Bus6",
-          "label": "Bus"
-      
-        },
-        {
-          "codeItem": 2,
-          "value": "Train",
-          "label": "Train",
-          "requiresPrecision": true
-        },
-        {
-          "codeItem": 3,
-          "value": "Voiture",
-          "label": "Voiture"
-        },
-       
-        {
-          "codeItem": 6,
-          "value": "Aucun",
-          "label": "Aucun",
-          "exclusive": true
-        }
+        { "codeItem": 1, "value": "Bus6", "label": "Bus" },
+        { "codeItem": 2, "value": "Train", "label": "Train", "requiresPrecision": true },
+        { "codeItem": 3, "value": "Voiture", "label": "Voiture" },
+        { "codeItem": 6, "value": "Aucun", "label": "Aucun", "exclusive": true }
       ],
       "required": true,
       "output_cond": "value.length > 0",
-      
       "isSubQuestion": false
     },
     {
@@ -305,43 +256,11 @@
       "type": "single_choice",
       "label": "Fréquence d’utilisation du transport en commun",
       "options": [
-        {
-          "codeItem": 1,
-          "label": "Tous les jours1"
-        },
-        {
-          "codeItem": 2,
-          "label": "Quelques fois par semaine2",
-          "requiresPrecision": true
-        }
-        
+        { "codeItem": 1, "label": "Tous les jours1" },
+        { "codeItem": 2, "label": "Quelques fois par semaine2", "requiresPrecision": true }
       ],
       "placeholder": "",
       "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
-      
-      "required": true,
-      "isSubQuestion": true
-    },
-     {
-      "id": "q12",
-      "title": "Q12bis.",
-      "type": "single_choice",
-      "label": "Fréquence d’utilisation du transport en commun",
-      "options": [
-        {
-          "codeItem": 1,
-          "label": "Tous les jours13"
-        },
-        {
-          "codeItem": 2,
-          "label": "Quelques fois par semaine24",
-          "requiresPrecision": true
-        }
-        
-      ],
-      "placeholder": "",
-      "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
-      
       "required": true,
       "isSubQuestion": true
     },
@@ -352,61 +271,16 @@
       "label": "Votre commune de résidence",
       "table": "communes",
       "columns": [
-        {
-          "name": "commune",
-          "displayInList": true,
-          "displayInInput": true,
-          "saveInDB": true
-        },
-        {
-          "name": "cp",
-          "displayInList": true,
-          "displayInInput": true,
-          "saveInDB": true
-        },
-        {
-          "name": "_id",
-          "displayInList": false,
-          "displayInInput": false,
-          "saveInDB": true
-        }
+        { "name": "commune", "displayInList": true, "displayInInput": true, "saveInDB": true },
+        { "name": "cp", "displayInList": true, "displayInInput": true, "saveInDB": true },
+        { "name": "_id", "displayInList": false, "displayInInput": false, "saveInDB": true }
       ],
       "placeholder": "Tapez pour rechercher votre commune",
       "help_text": "Commencez à taper et sélectionnez la commune correspondante",
-      
       "input_cond": "",
       "output_cond": "value !== null",
       "required": true,
       "isSubQuestion": true
-    },
-    {
-      "id": "q25",
-      "type": "grid",
-      "title": "Q20.",
-      "label": "À quelle fréquence utilisez-vous les moyens de transport suivants ?",
-      "redirection": "q22",
-      "required": true,
-    
-      "rows": [
-        { "id": "bus", "label": "Bus" },
-        { "id": "train", "label": "Train" },
-        { "id": "metro", "label": "Métro" }
-      ],
-    
-      "columns": [
-        { "value": "daily", "label": "Tous les jours" },
-        { "value": "weekly", "label": "Quelques fois par semaine" },
-        { "value": "rarely", "label": "Rarement" },
-        { "value": "never", "label": "Jamais", "exclusive": true }
-      ],
-    
-     "rules": {
-  "onePerRow": false, 
-  "requiredRows": ["bus", "train"],
-  "forbiddenCombinations": [
-    { "row": "bus", "value": "never" }
-  ]
-}
     }
   ]
 }
